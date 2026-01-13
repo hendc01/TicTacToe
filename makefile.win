@@ -1,0 +1,52 @@
+# Project: TICTAC
+# Makefile created by Red Panda C++ 3.3.3147
+
+CXX      = "g++.exe"
+CC       = "gcc.exe"
+WINDRES  = "windres.exe"
+RM       = del /q /f
+CD       = cd /d
+LIBS     = "-LC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include" "-Wl,--stack,12582912"
+INCS     = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include"
+CXXINCS  = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include"
+CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
+CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
+WINDRESFLAGS = 
+RES      = TICTAC_private.res
+OBJ      = src/game.o src/inputSafe.o src/menu.o src/render.o src/gameMode.o src/main.o $(RES)
+BIN      = TICTAC.exe
+LINKOBJ  = "src/game.o" "src/inputSafe.o" "src/menu.o" "src/render.o" "src/gameMode.o" "src/main.o" "TICTAC_private.res"
+CLEANOBJ = "src\game.o" "src\inputSafe.o" "src\menu.o" "src\render.o" "src\gameMode.o" "src\main.o" "TICTAC_private.res" "TICTAC.exe"
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	-$(RM) $(CLEANOBJ) >NUL 2>&1
+
+TICTAC.exe: $(OBJ)
+
+	$(CC) $(LINKOBJ) -o "TICTAC.exe" $(LIBS)
+
+src/game.o: src/game.c
+	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/inputSafe.o: src/inputSafe.c
+	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/menu.o: src/menu.c
+	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/render.o: src/render.c
+	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/gameMode.o: src/gameMode.c
+	$(CC) -c "src/gameMode.c" -o "src/gameMode.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/main.o: src/main.c
+	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+TICTAC_private.res: TICTAC_private.rc 
+	$(WINDRES) -i "TICTAC_private.rc" --input-format=rc -o "TICTAC_private.res" -O coff $(WINDRESFLAGS) 
+
