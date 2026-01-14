@@ -98,8 +98,9 @@ GameResult gamePvE( board *grid )
 		{
 			turn++; 
 			ps = level1( grid );
+			currentPlayer = whoTurn( turn );
 			gridAlloc( grid, ps.row, ps.collum, currentPlayer );
-
+			turn++;
 			printBoard( grid );
 			winner = result( grid );
 			if( winner != RESULT_NOT_WIN )
