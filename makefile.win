@@ -33,7 +33,7 @@ src/gameMode.o: src/gameMode.c include/game.h include/gameTypes.h include/gameMo
 	$(CC) -c "src/gameMode.c" -o "src/gameMode.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 src/levels.o: src/levels.c include/levels.h include/game.h include/gameTypes.h
-	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 src/menu.o: src/menu.c include/inputSafe.h include/menu.h include/gameTypes.h
 	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
@@ -47,7 +47,7 @@ src/render.o: src/render.c include/render.h include/gameTypes.h
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/game.o: src/game.c include/inputSafe.h include/render.h include/game.h include/menu.h include/gameTypes.h include/gameMode.h
+src/game.o: src/game.c include/inputSafe.h include/render.h include/levels.h include/game.h include/menu.h include/gameTypes.h include/gameMode.h
 	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 TicTacToe_private.res: TicTacToe_private.rc 

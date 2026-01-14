@@ -45,7 +45,7 @@ GameTypes playerMachine( void )
 	printf( "Player vs Machine\n" );
 	printf( "(1) LEVEL 1 \n" );
 	printf( "(2) TO COME\n" );
-	return (GameTypes)intInput( 1, 2 );
+	return (intInput( 1, 2 )) + 2;
 }
 
 

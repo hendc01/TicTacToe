@@ -1,5 +1,6 @@
+#include "levels.h"
 #include "game.h"
-#include "./gameTypes.h"
+#include "gameTypes.h"
 #include "inputSafe.h"
 #include "render.h"
 #include "gameMode.h"
@@ -13,6 +14,7 @@ void game ( void )
 	
 	initializer( &grid );
 	gameType = runMenu();
+	printf("test%d", gameType);
 	switch ( gameType ) 
 	{
 	case PLAYER_VS_PLAYER:
@@ -20,8 +22,8 @@ void game ( void )
 		menu1();
 		gamePVPControler( &grid );
 		break;
-	case 2:
-		//TODO
+	case LEVEL1:
+		gamePvE( &grid );
 		break;
 	default:
 		//TODO
@@ -73,6 +75,41 @@ GameResult gamePVPControler( board *grid )
 				return RESULT_DRAW;
 			}
 			
+		}
+	}	
+}
+
+GameResult gamePvE( board *grid )
+{
+	GameResult winner;
+	position ps;
+	State moveResult;
+	int turn = 0;
+	Cell currentPlayer;
+	
+	while( 1 )
+	{
+		ps = gameInput();
+		currentPlayer = whoTurn( turn );
+		moveResult = gridAlloc( grid, ps.row, ps.collum, currentPlayer );
+		displayMoveMsg( moveResult );
+		
+		if( moveResult == MOVE_OK )
+		{
+			turn++; 
+			ps = level1( grid );
+			gridAlloc( grid, ps.row, ps.collum, currentPlayer );
+
+			printBoard( grid );
+			winner = result( grid );
+			if( winner != RESULT_NOT_WIN )
+			{
+				return winner;
+			}
+			else if( turn == 9 )
+			{
+				return RESULT_DRAW;
+			}
 		}
 	}	
 }

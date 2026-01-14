@@ -16,4 +16,5 @@ Cell verticalChecker( const board *grid );
 Cell whoTurn( int turn );
 position gameInput();
 GameResult result( const board *grid );
+GameResult gamePvE( board *grid );
 #endif
