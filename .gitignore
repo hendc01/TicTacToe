@@ -1,0 +1,20 @@
+# Build outputs
+*.o
+*.obj
+*.a
+*.exe
+
+# Red Panda IDE
+*.win
+*.layout
+*.depend
+*.bookmarks
+*.debug
+*.dev
+*_private.*
+untitled*
+
+# Build folders
+build/
+bin/
+obj/

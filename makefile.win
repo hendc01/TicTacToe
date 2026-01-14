@@ -1,4 +1,4 @@
-# Project: TICTAC
+# Project: TicTacToe
 # Makefile created by Red Panda C++ 3.3.3147
 
 CXX      = "g++.exe"
@@ -6,17 +6,17 @@ CC       = "gcc.exe"
 WINDRES  = "windres.exe"
 RM       = del /q /f
 CD       = cd /d
-LIBS     = "-LC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include" "-Wl,--stack,12582912"
-INCS     = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include"
-CXXINCS  = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe Project/include"
+LIBS     = "-Wl,--stack,12582912"
+INCS     = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe/include"
+CXXINCS  = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe/include"
 CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 WINDRESFLAGS = 
-RES      = TICTAC_private.res
-OBJ      = src/game.o src/inputSafe.o src/menu.o src/render.o src/gameMode.o src/main.o $(RES)
-BIN      = TICTAC.exe
-LINKOBJ  = "src/game.o" "src/inputSafe.o" "src/menu.o" "src/render.o" "src/gameMode.o" "src/main.o" "TICTAC_private.res"
-CLEANOBJ = "src\game.o" "src\inputSafe.o" "src\menu.o" "src\render.o" "src\gameMode.o" "src\main.o" "TICTAC_private.res" "TICTAC.exe"
+RES      = TicTacToe_private.res
+OBJ      = src/gameMode.o src/levels.o src/menu.o src/main.o src/render.o src/inputSafe.o src/game.o $(RES)
+BIN      = TicTacToe.exe
+LINKOBJ  = "src/gameMode.o" "src/levels.o" "src/menu.o" "src/main.o" "src/render.o" "src/inputSafe.o" "src/game.o" "TicTacToe_private.res"
+CLEANOBJ = "src\gameMode.o" "src\levels.o" "src\menu.o" "src\main.o" "src\render.o" "src\inputSafe.o" "src\game.o" "TicTacToe_private.res" "TicTacToe.exe"
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -25,28 +25,31 @@ all: all-before $(BIN) all-after
 clean: clean-custom
 	-$(RM) $(CLEANOBJ) >NUL 2>&1
 
-TICTAC.exe: $(OBJ)
+TicTacToe.exe: $(OBJ)
 
-	$(CC) $(LINKOBJ) -o "TICTAC.exe" $(LIBS)
+	$(CC) $(LINKOBJ) -o "TicTacToe.exe" $(LIBS)
 
-src/game.o: src/game.c
-	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/inputSafe.o: src/inputSafe.c
-	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/menu.o: src/menu.c
-	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/render.o: src/render.c
-	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/gameMode.o: src/gameMode.c
+src/gameMode.o: src/gameMode.c include/game.h include/gameTypes.h include/gameMode.h
 	$(CC) -c "src/gameMode.c" -o "src/gameMode.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/main.o: src/main.c
+src/levels.o: src/levels.c include/levels.h include/game.h include/gameTypes.h
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
+
+src/menu.o: src/menu.c include/inputSafe.h include/menu.h include/gameTypes.h
+	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/main.o: src/main.c include/inputSafe.h include/game.h include/gameTypes.h
 	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-TICTAC_private.res: TICTAC_private.rc 
-	$(WINDRES) -i "TICTAC_private.rc" --input-format=rc -o "TICTAC_private.res" -O coff $(WINDRESFLAGS) 
+src/render.o: src/render.c include/render.h include/gameTypes.h
+	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/inputSafe.o: src/inputSafe.c include/inputSafe.h
+	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/game.o: src/game.c include/inputSafe.h include/render.h include/game.h include/menu.h include/gameTypes.h include/gameMode.h
+	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+TicTacToe_private.res: TicTacToe_private.rc 
+	$(WINDRES) -i "TicTacToe_private.rc" --input-format=rc -o "TicTacToe_private.res" -O coff $(WINDRESFLAGS) 
 

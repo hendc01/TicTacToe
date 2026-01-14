@@ -1,5 +1,5 @@
 #include "game.h"
-#include "gameTypes.h"
+#include "./gameTypes.h"
 #include "inputSafe.h"
 #include "render.h"
 #include "gameMode.h"
@@ -92,6 +92,7 @@ GameResult result( const board *grid )
 		return RESULT_NOT_WIN;
 	}
 	return RESULT_ERROR;
+	
 }
 /*Makes the board move*/
 State gridAlloc( board *grid, int row, int collum, Cell currentPlayer )

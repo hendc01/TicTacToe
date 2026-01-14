@@ -34,11 +34,18 @@ typedef enum
 	MENU_ERROR = 0,
 }GameTypes;
 
+typedef enum{
+	LEVEL1_ERROR = 0,	
+	LEVEL_OK = 1,
+}LevelError;
+
 typedef struct
 {
 	int row;
 	int collum;
-}position ;
+	LevelError error;
+	
+}position;
 
 /*Define the how the game store data*/
 typedef struct 
