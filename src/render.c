@@ -11,7 +11,7 @@ void menu1 ( void )
 	printf( "__|  |__ 3\n" );
 }
 
-void converter( Cell cell)
+void converterCell( Cell cell)
 {
 	switch ( cell ) 
 	{
@@ -29,6 +29,26 @@ void converter( Cell cell)
 		break;
 	}
 }
+void converterState( State state )
+{
+	switch ( state ) 
+	{
+	case RESULT_X_WINS:
+		printf( "X" );
+		break;
+	case RESULT_O_WINS:
+		printf( "O" );
+		break;
+	case RESULT_DRAW:
+		printBoard( "DRAWN" );
+	case RESULT_ERROR:
+		printf( "WIN ERROR" );
+		break;
+	default:
+		printf( "ERROR" );
+		break;
+	}
+}
 
 void printBoard( const board *grid )
 {
@@ -38,7 +58,7 @@ void printBoard( const board *grid )
 		printf( "%d ", r+1 );
 		for( int c = 0; c < 3; c++)
 		{
-			converter( grid->boardGrid[r][c] );
+			converterCell( grid->boardGrid[r][c] );
 			if( c < 2 )
 			{
 				printf( " |" );

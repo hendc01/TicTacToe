@@ -43,7 +43,7 @@ GameTypes playerMachine( void )
 	int choice = 0;
 	printf( "Player vs Machine\n" );
 	printf( "(1) LEVEL 1 \n" );
-	printf( "(2) TO COME\n" );
+	printf( "(2) LEVEL 2\n" );
 	choice = intInput( 1, 2 );
 	return ( choice == 1 ) ? LEVEL1 : LEVEL2;
 }

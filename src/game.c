@@ -14,19 +14,20 @@ void game ( void )
 	
 	initializer( &grid );
 	gameType = runMenu();
-	printf("test%d", gameType);
 	switch ( gameType ) 
 	{
 	case PLAYER_VS_PLAYER:
-		
-		menu1();
+		printBoard( &grid );
 		gamePVPControler( &grid );
 		break;
 	case LEVEL1:
+		printBoard( &grid );
 		gamePvE( &grid, LEVEL1 );
 		break;
 	case LEVEL2:
-		gamePvE( &grid, LEVEL2 );
+		printBoard( &grid );
+		
+		converterState(gamePvE( &grid, LEVEL2 ));
 	default:
 		//TODO
 		break;
@@ -37,11 +38,11 @@ position gameInput()
 {
 	position ps;
 	
-	printf("Type the collum:\n");
-	ps.collum = intInput(1, 3) - 1;
-	
 	printf("Type the row\n");
 	ps.row = intInput(1,3) -1 ;
+
+	printf("Type the collum:\n");
+	ps.collum = intInput(1, 3) - 1;
 	
 	return ps;
 }
@@ -88,10 +89,11 @@ GameResult gamePvE( board *grid, GameTypes level )
 	
 	while( 1 )
 	{
+		printBoard( grid );
 		ps = gameInput();
 		moveResult = doMove( grid, ps, &turn );
 		displayMoveMsg( moveResult );
-		
+		/*Human set*/
 		if( moveResult != MOVE_OK )
 		{ 
 			continue;
@@ -105,7 +107,7 @@ GameResult gamePvE( board *grid, GameTypes level )
 		{
 			return RESULT_DRAW;
 		}
-
+		/*Ai set*/
 		if( level == LEVEL1 )
 		{
 			ps = level1( grid );
@@ -113,9 +115,7 @@ GameResult gamePvE( board *grid, GameTypes level )
 		else if( level == LEVEL2 )
 		{
 			ps = level2( grid, whoTurn( turn ) );
-	
 		}
-
 		if( ps.error == LEVEL_OK )
 		{
 			doMove( grid, ps, &turn );
