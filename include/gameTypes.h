@@ -21,8 +21,9 @@ typedef enum {
 
 typedef enum
 {
-	MOVE_OK = 1,
-	MOVE_OCCUPIED = 0,
+	MOVE_OK = 0,
+	MOVE_OCCUPIED = 1,
+	MOVE_OUT_RANGE = 2,
 } State;
 
 typedef enum

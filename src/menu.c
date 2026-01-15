@@ -11,8 +11,6 @@ GameTypes runMenu( void )
 	{
 		case PLAYER_VS_PLAYER:
 			return PLAYER_VS_PLAYER;
-
-		
 		case PLAYER_VS_MACHINE:
 		
 			level = playerMachine();
@@ -42,10 +40,12 @@ GameTypes mainMenu( void )
 
 GameTypes playerMachine( void )
 {
+	int choice = 0;
 	printf( "Player vs Machine\n" );
 	printf( "(1) LEVEL 1 \n" );
 	printf( "(2) TO COME\n" );
-	return (intInput( 1, 2 )) + 2;
+	choice = intInput( 1, 2 );
+	return ( choice == 1 ) ? LEVEL1 : LEVEL2;
 }
 
 

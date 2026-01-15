@@ -90,29 +90,50 @@ GameResult gamePvE( board *grid )
 	while( 1 )
 	{
 		ps = gameInput();
-		currentPlayer = whoTurn( turn );
-		moveResult = gridAlloc( grid, ps.row, ps.collum, currentPlayer );
+		moveResult = doMove( grid, ps, &turn );
 		displayMoveMsg( moveResult );
 		
-		if( moveResult == MOVE_OK )
-		{
-			turn++; 
-			ps = level1( grid );
-			currentPlayer = whoTurn( turn );
-			gridAlloc( grid, ps.row, ps.collum, currentPlayer );
-			turn++;
-			printBoard( grid );
-			winner = result( grid );
-			if( winner != RESULT_NOT_WIN )
-			{
-				return winner;
-			}
-			else if( turn == 9 )
-			{
-				return RESULT_DRAW;
-			}
+		if( moveResult != MOVE_OK )
+		{ 
+			continue;
 		}
-	}	
+		winner = result( grid );
+		if( winner != RESULT_NOT_WIN )
+		{
+			return winner;
+		}
+		if( turn == 9 )
+		{
+			return RESULT_DRAW;
+		}
+		ps = level1( grid );
+		if( ps.error == LEVEL_OK )
+		{
+			doMove( grid, ps, &turn );
+		}
+		winner = result( grid );
+		if( winner != RESULT_NOT_WIN )
+		{
+			return winner;
+		}
+		if( turn == 9 )
+		{
+			return RESULT_DRAW;
+		}
+	} 
+}
+
+State doMove( board *grid, position ps, int *turn )
+{
+	Cell currentPlayer = whoTurn( *turn );
+	State result = gridAlloc( grid, ps.row, ps.collum, currentPlayer );
+	if( result == MOVE_OCCUPIED )
+	{
+		return MOVE_OCCUPIED;
+	}
+	printBoard( grid );
+	(*turn)++;
+	return MOVE_OK;
 }
 
 GameResult result( const board *grid )
@@ -133,13 +154,17 @@ GameResult result( const board *grid )
 	
 }
 /*Makes the board move*/
-State gridAlloc( board *grid, int row, int collum, Cell currentPlayer )
+State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
 {
 	
-	if( isCellEmpty( grid, row, collum ) == CELL_EMPTY )
+	if( isCellEmpty( grid, row, column ) == CELL_EMPTY )
 	{
-		grid->boardGrid[row][collum] = currentPlayer;
+		grid->boardGrid[row][column] = currentPlayer;
 		return MOVE_OK;
+	}
+	else if( row < 0 || column < 0 || row > 2 || column > 2 )
+	{
+		return MOVE_OUT_RANGE;
 	}
 	else
 	{
