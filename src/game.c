@@ -23,14 +23,14 @@ void game ( void )
 		gamePVPControler( &grid );
 		break;
 	case LEVEL1:
-		gamePvE( &grid );
+		gamePvE( &grid, LEVEL1 );
 		break;
+	case LEVEL2:
+		gamePvE( &grid, LEVEL2 );
 	default:
 		//TODO
 		break;
 	}
-	
-	
 }
 /*Allow the user to input the grids, and checks if that block is empty*/
 position gameInput()
@@ -74,12 +74,11 @@ GameResult gamePVPControler( board *grid )
 			{
 				return RESULT_DRAW;
 			}
-			
 		}
 	}	
 }
 
-GameResult gamePvE( board *grid )
+GameResult gamePvE( board *grid, GameTypes level )
 {
 	GameResult winner;
 	position ps;
@@ -106,7 +105,17 @@ GameResult gamePvE( board *grid )
 		{
 			return RESULT_DRAW;
 		}
-		ps = level1( grid );
+
+		if( level == LEVEL1 )
+		{
+			ps = level1( grid );
+		}
+		else if( level == LEVEL2 )
+		{
+			ps = level2( grid, whoTurn( turn ) );
+	
+		}
+
 		if( ps.error == LEVEL_OK )
 		{
 			doMove( grid, ps, &turn );
@@ -156,7 +165,6 @@ GameResult result( const board *grid )
 /*Makes the board move*/
 State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
 {
-	
 	if( isCellEmpty( grid, row, column ) == CELL_EMPTY )
 	{
 		grid->boardGrid[row][column] = currentPlayer;
@@ -216,7 +224,6 @@ void initializer ( board *grid )
 			grid->boardGrid[r][c] = CELL_EMPTY;
 		}
 	}
-	
 }
 
 Cell winChecker( const board *grid )
