@@ -2,14 +2,7 @@
 #include "gameTypes.h"
 #include <stdio.h>
 
-void menu1 ( void )
-{
-	printf( "TicTacToe\n" );
-	printf( " 1  2  3 \n" );
-	printf( "__|__|__ 1\n" );
-	printf( "__|__|__ 2\n" );
-	printf( "__|  |__ 3\n" );
-}
+
 
 void converterCell( Cell cell)
 {
@@ -72,4 +65,12 @@ void printBoard( const board *grid )
 	}
 }
 
+/*Login Render*/
+void loginMenu( void )
+{
+	printf( " TIC-TAC-TOE " );
+	printf( "(1) Login" );
+	printf( "(2)Register" );
+	
+}
 

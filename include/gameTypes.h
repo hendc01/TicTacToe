@@ -40,6 +40,12 @@ typedef enum{
 	LEVEL_OK = 1,
 }LevelError;
 
+typedef enum
+{
+	LOGIN = 0,
+	REGISTER = 1,
+}LoginOpt;
+
 typedef struct
 {
 	int row;
@@ -53,6 +59,13 @@ typedef struct
 {
 	Cell boardGrid[3][3];	
 } board;
+
+typedef struct
+{
+	char userName[17];
+	char userPass[17];
+}user
+
 
 #endif
 

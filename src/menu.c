@@ -48,4 +48,16 @@ GameTypes playerMachine( void )
 	return ( choice == 1 ) ? LEVEL1 : LEVEL2;
 }
 
+/*Login Render*/
+LoginOpt loginMenu( void )
+{
+	printf( " TIC-TAC-TOE " );
+	printf( "(1) Login" );
+	printf( "(2) Register" );
+	return (LoginOpt)intInput( 1, 2 );
+}
 
+int loginInput( void )
+{
+	printf( "Username" );
+}
