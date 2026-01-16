@@ -57,7 +57,5 @@ LoginOpt loginMenu( void )
 	return (LoginOpt)intInput( 1, 2 );
 }
 
-int loginInput( void )
-{
-	printf( "Username" );
-}
+
+

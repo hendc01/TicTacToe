@@ -46,6 +46,13 @@ typedef enum
 	REGISTER = 1,
 }LoginOpt;
 
+typedef enum
+{
+	STRING_TRUNCATED = 0,
+	STRING_ERROR = 1,
+	STRING_OK = 2,
+}SafeString;
+
 typedef struct
 {
 	int row;
@@ -64,7 +71,7 @@ typedef struct
 {
 	char userName[17];
 	char userPass[17];
-}user
+}userInfo;
 
 
 #endif

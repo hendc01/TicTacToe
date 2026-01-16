@@ -21,25 +21,45 @@ int intInput ( int min, int max )
 }
 
 /*Validate char*/
-int stringInput( char *buff, int size  )
+SafeString stringInput( char *buff, int size  )
 {
+	int overFlow = 0;
 	if( !fgets( buff , size, stdin  ) ) 
 	{
-		return 0;
+		return STRING_ERROR;
 	}
 	/*Cleaning buffer in case the buffer overflow*/
-	if ( strchr( buff, "\n" ))
+	if ( !strchr( buff, '/n' ))
 	{
 		cleanBuffer();
+		overFlow = 1;
 	}
 	/*It replaces the new line with the null-operator*/
 	buff[strcspn( buff, "\n" )] = 0;
-	return 1;
-
-	
-
+	if( overFlow )
+	{
+		return STRING_TRUNCATED;
+	}
+	return STRING_OK;
 }
 
+void userInput( char *userInfo, int size )
+{
+	SafeString stringOut = STRING_ERROR;
+	while( stringOut != STRING_OK )
+	{
+		stringOut = stringInput( userInfo, size );
+		if( stringOut == STRING_TRUNCATED )
+		{
+			printf("Maximum %d characterer\n", size -1 );
+			continue;
+		}
+		else if( stringOut == STRING_ERROR )
+		{
+			printf( "Error. Try Again\n" );
+		}
+	}
+}
 void cleanBuffer ( void )
 {
 	int ch;

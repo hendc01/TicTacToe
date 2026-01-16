@@ -83,7 +83,6 @@ int isThereWin( const board *grid, position *ps, Cell currentPlayer )
 	}
 	return 0;
 }
-
 int randomIndex( int max )
 {
 	return rand() % max;
