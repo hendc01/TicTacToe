@@ -38,7 +38,7 @@ src/levels.o: src/levels.c include/levels.h include/game.h include/gameTypes.h
 src/menu.o: src/menu.c include/inputSafe.h include/menu.h include/gameTypes.h
 	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/main.o: src/main.c include/inputSafe.h include/game.h include/gameTypes.h
+src/main.o: src/main.c include/inputSafe.h include/game.h include/menu.h include/gameTypes.h
 	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 src/render.o: src/render.c include/render.h include/gameTypes.h

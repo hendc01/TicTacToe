@@ -7,27 +7,26 @@
 #include "menu.h"
 #include <stdio.h>
 
-void game ( void )
+void game ( board *grid )
 {
 	GameTypes gameType;
-	board grid;
 	
-	initializer( &grid );
+	initializer( grid );
 	gameType = runMenu();
 	switch ( gameType ) 
 	{
 	case PLAYER_VS_PLAYER:
-		printBoard( &grid );
-		gamePVPControler( &grid );
+		printBoard( grid );
+		gamePVPControler( grid );
 		break;
 	case LEVEL1:
-		printBoard( &grid );
-		gamePvE( &grid, LEVEL1 );
+		printBoard( grid );
+		gamePvE( grid, LEVEL1 );
 		break;
 	case LEVEL2:
-		printBoard( &grid );
+		printBoard( grid );
 		
-		converterState(gamePvE( &grid, LEVEL2 ));
+		converterState(gamePvE( grid, LEVEL2 ));
 	default:
 		//TODO
 		break;

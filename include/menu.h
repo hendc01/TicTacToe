@@ -4,5 +4,5 @@
 GameTypes mainMenu( void );
 GameTypes runMenu( void );
 GameTypes playerMachine( void );
-
+LoginOpt loginMenu( void );
 #endif

@@ -5,5 +5,5 @@ void menu1 ( void );
 void converterCell( Cell cell);
 void printBoard( const board *grid );
 
-void converterState( State state );
+void converterState( GameResult result );
 #endif

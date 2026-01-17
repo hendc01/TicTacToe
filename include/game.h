@@ -2,7 +2,7 @@
 #define GAME_H
 #include "gameTypes.h"
 
-void game ( void );
+void game ( board *grid );
 void initializer ( board *grid );
 Cell isCellEmpty( const board *grid, int r, int c );
 void menu1 ( void );

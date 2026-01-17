@@ -22,9 +22,9 @@ void converterCell( Cell cell)
 		break;
 	}
 }
-void converterState( State state )
+void converterState( GameResult result )
 {
-	switch ( state ) 
+	switch ( result ) 
 	{
 	case RESULT_X_WINS:
 		printf( "X" );
@@ -33,7 +33,7 @@ void converterState( State state )
 		printf( "O" );
 		break;
 	case RESULT_DRAW:
-		printBoard( "DRAWN" );
+		printf( "DRAWN" );
 	case RESULT_ERROR:
 		printf( "WIN ERROR" );
 		break;
@@ -65,12 +65,7 @@ void printBoard( const board *grid )
 	}
 }
 
-/*Login Render*/
-void loginMenu( void )
-{
-	printf( " TIC-TAC-TOE " );
-	printf( "(1) Login" );
-	printf( "(2)Register" );
-	
-}
+
+
+
 
