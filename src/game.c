@@ -10,6 +10,7 @@
 void game ( board *grid )
 {
 	GameTypes gameType;
+	/*Returns Game Option*/
 	gameType = mainMenu();
 	initializer( grid );
 	
@@ -19,15 +20,12 @@ void game ( board *grid )
 		printBoard( grid );
 		gamePVPControler( grid );
 		break;
-	case LEVEL1:
-		printBoard( grid );
-		gamePvEControler( grid, LEVEL1 );
-		break;
-	case LEVEL2:
-		printBoard( grid );
-		converterState(gamePvEControler( grid, LEVEL2 ));
+	case PLAYER_VS_MACHINE:
+		gameType = pveMenu();
+		gamePvEControler( grid, gameType );
 		break;
 	default:
+		printf("%d", gameType);
 		break;
 	}
 }
@@ -43,24 +41,25 @@ GameResult gamePVPControler( board *grid )
 	}while( winner == RESULT_NOT_WIN  );
 	return winner;
 }
-
+/*Populate the board with Humans Input Moves*/
 GameResult humanTurn( board *grid, int *turn )
 {
 	GameResult winner = RESULT_NOT_WIN;
 	position ps;
-	State moveResult;
+	State moveResult = MOVE_OCCUPIED;
 	
-	while( winner == RESULT_NOT_WIN  )
+	while( moveResult != MOVE_OK  )
 	{
 		ps = gameInput();
 		moveResult = doMove( grid, ps, turn );
 		
-		if( moveResult != MOVE_OK )
+		if( moveResult == MOVE_OK )
 		{
-			displayMoveMsg( moveResult );
-			continue;
-		}	
-		winner = result( grid, *turn );
+			winner = result( grid, *turn );
+			break;
+		}
+		displayMoveMsg( moveResult );
+		
 	}
 	return winner;
 }

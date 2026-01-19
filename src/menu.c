@@ -15,7 +15,7 @@ GameTypes mainMenu( void )
 	return (GameTypes)intInput( 1, 2 );
 }
 
-GameTypes playerMachine( void )
+GameTypes pveMenu( void )
 {
 	int choice = 0;
 	printf( "Player vs Machine\n" );
