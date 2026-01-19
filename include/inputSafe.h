@@ -3,4 +3,5 @@
 
 int intInput ( int min, int max );
 void cleanBuffer ( void );
+void userInput( char *userInfo, int size );
 #endif

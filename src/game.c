@@ -10,9 +10,8 @@
 void game ( board *grid )
 {
 	GameTypes gameType;
-	
+	gameType = mainMenu();
 	initializer( grid );
-	gameType = runMenu();
 	switch ( gameType ) 
 	{
 	case PLAYER_VS_PLAYER:

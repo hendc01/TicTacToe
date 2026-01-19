@@ -29,7 +29,7 @@ SafeString stringInput( char *buff, int size  )
 		return STRING_ERROR;
 	}
 	/*Cleaning buffer in case the buffer overflow*/
-	if ( !strchr( buff, '/n' ))
+	if ( !strchr( buff, '\n' ))
 	{
 		cleanBuffer();
 		overFlow = 1;

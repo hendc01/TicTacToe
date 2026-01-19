@@ -42,8 +42,8 @@ typedef enum{
 
 typedef enum
 {
-	LOGIN = 0,
-	REGISTER = 1,
+	LOGIN = 1,
+	REGISTER = 2,
 }LoginOpt;
 
 typedef enum

@@ -5,6 +5,7 @@
 #include "inputSafe.h"
 #include "game.h"
 #include "menu.h"
+#include "auth.h"
 
 
 int main( void )
@@ -12,7 +13,7 @@ int main( void )
 	srand( time( NULL ) );
 	board grid;
 	userInfo user;
-	loginMenu();
+	printf("%d",authRun( &user ));
 	game( &grid );
 	
 	return 0;
