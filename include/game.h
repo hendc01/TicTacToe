@@ -17,5 +17,6 @@ Cell whoTurn( int turn );
 position gameInput();
 GameResult result( const board *grid, int turn );
 GameResult gamePvEControler( board *grid, GameTypes level );
+GameResult humanTurn( board *grid, int *turn );
 State doMove(board *grid, position ps, int *turn);
 #endif

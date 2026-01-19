@@ -35,23 +35,33 @@ void game ( board *grid )
 GameResult gamePVPControler( board *grid )
 {
 	GameResult winner = RESULT_NOT_WIN;
-	position ps;
-	State moveResult;
 	int turn = 0;
 	do
 	{
+		winner = humanTurn( grid, &turn );
+		
+	}while( winner == RESULT_NOT_WIN  );
+	return winner;
+}
+
+GameResult humanTurn( board *grid, int *turn )
+{
+	GameResult winner = RESULT_NOT_WIN;
+	position ps;
+	State moveResult;
+	
+	while( winner == RESULT_NOT_WIN  )
+	{
 		ps = gameInput();
-		moveResult = doMove( grid, ps, &turn );
+		moveResult = doMove( grid, ps, turn );
 		
 		if( moveResult != MOVE_OK )
 		{
 			displayMoveMsg( moveResult );
 			continue;
 		}
-		winner = result( grid, turn );
-		
-	}while( winner == RESULT_NOT_WIN  );
-	return winner;
+		return winner = result( grid, *turn );	
+	}
 }
 
 GameResult gamePvEControler( board *grid, GameTypes level )
