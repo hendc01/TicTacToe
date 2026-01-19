@@ -64,7 +64,7 @@ GameResult gamePVPControler( board *grid )
 		{
 			turn++; 
 			printBoard( grid );
-			winner = result( grid );
+			winner = result( grid, 0 );
 			if( winner != RESULT_NOT_WIN )
 			{
 				return winner;
@@ -83,7 +83,6 @@ GameResult gamePvE( board *grid, GameTypes level )
 	position ps;
 	State moveResult;
 	int turn = 0;
-	Cell currentPlayer;
 	
 	while( 1 )
 	{
@@ -96,12 +95,12 @@ GameResult gamePvE( board *grid, GameTypes level )
 		{ 
 			continue;
 		}
-		winner = result( grid );
+		winner = result( grid, turn);
 		if( winner != RESULT_NOT_WIN )
 		{
 			return winner;
 		}
-		if( turn == 9 )
+		if( winner == RESULT_DRAW )
 		{
 			return RESULT_DRAW;
 		}
@@ -118,12 +117,12 @@ GameResult gamePvE( board *grid, GameTypes level )
 		{
 			doMove( grid, ps, &turn );
 		}
-		winner = result( grid );
+		winner = result( grid, turn );
 		if( winner != RESULT_NOT_WIN )
 		{
 			return winner;
 		}
-		if( turn == 9 )
+		if( winner == RESULT_DRAW )
 		{
 			return RESULT_DRAW;
 		}
@@ -143,7 +142,7 @@ State doMove( board *grid, position ps, int *turn )
 	return MOVE_OK;
 }
 
-GameResult result( const board *grid )
+GameResult result( const board *grid, int turn )
 {
 	Cell winner = CELL_EMPTY;
 	winner = winChecker( grid );
@@ -155,7 +154,13 @@ GameResult result( const board *grid )
 	case CELL_O:
 		return RESULT_O_WINS;
 	case CELL_EMPTY:
+		if( turn == 9 )
+		{
+			return RESULT_DRAW;
+			break;
+		}
 		return RESULT_NOT_WIN;
+		break;
 	}
 	return RESULT_ERROR;
 	

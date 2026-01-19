@@ -70,7 +70,7 @@ int isThereWin( const board *grid, position *ps, Cell currentPlayer )
 				continue;
 			} 
 			gridAlloc( &temp, r, c, currentPlayer );
-			win = result( &temp );
+			win = result( &temp, 0);
 			if ((currentPlayer == CELL_X && win == RESULT_X_WINS) ||
                 (currentPlayer == CELL_O && win == RESULT_O_WINS))
 			{

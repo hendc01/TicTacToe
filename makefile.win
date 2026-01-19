@@ -45,7 +45,7 @@ src/menu.o: src/menu.c include/inputSafe.h include/gameTypes.h include/menu.h in
 	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS) 
 
 src/levels.o: src/levels.c include/gameTypes.h include/game.h include/levels.h
-	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
 
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
