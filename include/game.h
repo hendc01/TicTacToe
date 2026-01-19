@@ -19,4 +19,6 @@ GameResult result( const board *grid, int turn );
 GameResult gamePvEControler( board *grid, GameTypes level );
 GameResult humanTurn( board *grid, int *turn );
 State doMove(board *grid, position ps, int *turn);
+position levelControler( board *grid ,GameTypes level,
+						int turn );
 #endif

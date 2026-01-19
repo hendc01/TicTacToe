@@ -26,7 +26,7 @@ position level1( const board *grid )
 	}	
 	if( count == 0 )
 	{
-		ps.error = LEVEL1_ERROR;
+		ps.error = LEVEL_ERROR;
 		ps.row = -1;
 		ps.collum = -1;
 		return ps;

@@ -67,51 +67,52 @@ GameResult humanTurn( board *grid, int *turn )
 
 GameResult gamePvEControler( board *grid, GameTypes level )
 {
-	GameResult winner;
+	GameResult winner = RESULT_NOT_WIN;
 	position ps;
 	State moveResult;
 	int turn = 0;
-	
-	while( 1 )
+	printBoard( grid );
+	while( winner == RESULT_NOT_WIN )
 	{
-		printBoard( grid );
-		ps = gameInput();
+		winner = humanTurn( grid, &turn );
+		if( winner != RESULT_NOT_WIN  )
+		{
+			break;
+		}
+		ps = levelControler( grid, level, turn  );
+		if( ps.error == LEVEL_ERROR )
+		{
+			return RESULT_ERROR;
+		}
 		moveResult = doMove( grid, ps, &turn );
-
-		/*Human set*/
 		if( moveResult != MOVE_OK )
-		{ 
+		{
 			displayMoveMsg( moveResult );
-			continue;
-		}
-		winner = result( grid, turn);
-		if( winner != RESULT_NOT_WIN )
-		{
-			return winner;
-		}
-		/*Ai set*/
-		if( level == LEVEL1 )
-		{
-			ps = level1( grid );
-		}
-		else if( level == LEVEL2 )
-		{
-			ps = level2( grid, whoTurn( turn ) );
-		}
-		if( ps.error == LEVEL_OK )
-		{
-			doMove( grid, ps, &turn );
 		}
 		winner = result( grid, turn );
-		if( winner != RESULT_NOT_WIN )
-		{
-			return winner;
-		}
-		if( winner == RESULT_DRAW )
-		{
-			return RESULT_DRAW;
-		}
 	} 
+	return winner;
+}
+
+position levelControler( board *grid ,GameTypes level,
+						int turn )
+{
+	position ps;
+	switch ( level ) 
+	{
+	case LEVEL1:
+		ps = level1( grid );
+		break;
+	case LEVEL2:
+		ps = level2( grid, whoTurn( turn ) );
+		break;
+	default:
+		ps.row = -1;
+		ps.collum = -1;
+		ps.error = LEVEL_ERROR;
+		break;
+	}
+	return ps;
 }
 
 State doMove( board *grid, position ps, int *turn )

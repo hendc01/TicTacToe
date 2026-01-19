@@ -36,7 +36,7 @@ typedef enum
 }GameTypes;
 
 typedef enum{
-	LEVEL1_ERROR = 0,	
+	LEVEL_ERROR = 0,	
 	LEVEL_OK = 1,
 }LevelError;
 
