@@ -6,12 +6,13 @@
 #include "gameMode.h"
 #include "menu.h"
 #include <stdio.h>
-
+/*Main controler*/
 void game ( board *grid )
 {
 	GameTypes gameType;
 	gameType = mainMenu();
 	initializer( grid );
+	
 	switch ( gameType ) 
 	{
 	case PLAYER_VS_PLAYER:
@@ -20,64 +21,40 @@ void game ( board *grid )
 		break;
 	case LEVEL1:
 		printBoard( grid );
-		gamePvE( grid, LEVEL1 );
+		gamePvEControler( grid, LEVEL1 );
 		break;
 	case LEVEL2:
 		printBoard( grid );
-		
-		converterState(gamePvE( grid, LEVEL2 ));
+		converterState(gamePvEControler( grid, LEVEL2 ));
+		break;
 	default:
-		//TODO
 		break;
 	}
 }
-/*Allow the user to input the grids, and checks if that block is empty*/
-position gameInput()
-{
-	position ps;
-	
-	printf("Type the row\n");
-	ps.row = intInput(1,3) -1 ;
-
-	printf("Type the collum:\n");
-	ps.collum = intInput(1, 3) - 1;
-	
-	return ps;
-}
-
+/*Player vs Player controler*/
 GameResult gamePVPControler( board *grid )
 {
-	GameResult winner;
+	GameResult winner = RESULT_NOT_WIN;
 	position ps;
 	State moveResult;
 	int turn = 0;
-	Cell currentPlayer;
-	
-	while( 1 )
+	do
 	{
 		ps = gameInput();
-		currentPlayer = whoTurn( turn );
-		moveResult = gridAlloc( grid, ps.row, ps.collum, currentPlayer );
-		displayMoveMsg( moveResult );
+		moveResult = doMove( grid, ps, &turn );
 		
-		if( moveResult == MOVE_OK )
+		if( moveResult != MOVE_OK )
 		{
-			turn++; 
-			printBoard( grid );
-			winner = result( grid, 0 );
-			if( winner != RESULT_NOT_WIN )
-			{
-				return winner;
-			}
-			else if( turn == 9 )
-			{
-				return RESULT_DRAW;
-			}
+			displayMoveMsg( moveResult );
+			continue;
 		}
-	}	
+		winner = result( grid, turn );
+		
+	}while( winner == RESULT_NOT_WIN  );
+	return winner;
 }
 
-GameResult gamePvE( board *grid, GameTypes level )
+GameResult gamePvEControler( board *grid, GameTypes level )
 {
 	GameResult winner;
 	position ps;
@@ -168,15 +145,16 @@ GameResult result( const board *grid, int turn )
 /*Makes the board move*/
 State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
 {
-	if( isCellEmpty( grid, row, column ) == CELL_EMPTY )
+	if( row < 0 || column < 0 || row > 2 || column > 2 )
+	{
+		return MOVE_OUT_RANGE;
+	}
+	else if( isCellEmpty( grid, row, column ) == CELL_EMPTY )
 	{
 		grid->boardGrid[row][column] = currentPlayer;
 		return MOVE_OK;
 	}
-	else if( row < 0 || column < 0 || row > 2 || column > 2 )
-	{
-		return MOVE_OUT_RANGE;
-	}
+
 	else
 	{
 		return MOVE_OCCUPIED;
@@ -202,20 +180,7 @@ Cell whoTurn( int turn )
 	return CELL_EMPTY;
 }
 
-void displayMoveMsg( State moveResult )
-{
-	switch ( moveResult ) 
-	{
-	case MOVE_OK:
-		break;
-	case MOVE_OCCUPIED:
-		printf("Cell already occupied.\n");
-		break;
-	default:
-		printf("MOVE ATTEMPT ERROR!\n");
-		break;
-	}
-}
+
 /*Initialize all the array grid to ENUM Cell_Empyty*/
 void initializer ( board *grid )
 {

@@ -60,6 +60,20 @@ void userInput( char *userInfo, int size )
 		}
 	}
 }
+/*Allow the user to input the grids, and checks if that block is empty*/
+position gameInput()
+{
+	position ps;
+	
+	printf("Type the row\n");
+	ps.row = intInput(1,3) -1 ;
+	
+	printf("Type the collum:\n");
+	ps.collum = intInput(1, 3) - 1;
+	
+	return ps;
+}
+
 void cleanBuffer ( void )
 {
 	int ch;

@@ -48,13 +48,13 @@ src/levels.o: src/levels.c include/gameTypes.h include/game.h include/levels.h
 	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
 
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
-	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS) 
 
 src/sql.o: src/sql.c include/sql.h include/sqlite3.h
 	$(CC) -c "src/sql.c" -o "src/sql.o" $(CFLAGS) 
 
 src/render.o: src/render.c include/gameTypes.h include/render.h
-	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS) 
 
 src/gameMode.o: src/gameMode.c include/gameTypes.h include/game.h include/gameMode.h
 	$(CC) -c "src/gameMode.c" -o "src/gameMode.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252

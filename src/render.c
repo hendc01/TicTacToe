@@ -43,6 +43,21 @@ void converterState( GameResult result )
 	}
 }
 
+void displayMoveMsg( State moveResult )
+{
+	switch ( moveResult ) 
+	{
+	case MOVE_OK:
+		break;
+	case MOVE_OCCUPIED:
+		printf("Cell already occupied.\n");
+		break;
+	default:
+		printf("MOVE ATTEMPT ERROR!\n");
+		break;
+	}
+}
+
 void printBoard( const board *grid )
 {
 	printf( "  1  2  3 \n" );
