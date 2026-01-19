@@ -59,9 +59,10 @@ GameResult humanTurn( board *grid, int *turn )
 		{
 			displayMoveMsg( moveResult );
 			continue;
-		}
-		return winner = result( grid, *turn );	
+		}	
+		winner = result( grid, *turn );
 	}
+	return winner;
 }
 
 GameResult gamePvEControler( board *grid, GameTypes level )
@@ -76,20 +77,17 @@ GameResult gamePvEControler( board *grid, GameTypes level )
 		printBoard( grid );
 		ps = gameInput();
 		moveResult = doMove( grid, ps, &turn );
-		displayMoveMsg( moveResult );
+
 		/*Human set*/
 		if( moveResult != MOVE_OK )
 		{ 
+			displayMoveMsg( moveResult );
 			continue;
 		}
 		winner = result( grid, turn);
 		if( winner != RESULT_NOT_WIN )
 		{
 			return winner;
-		}
-		if( winner == RESULT_DRAW )
-		{
-			return RESULT_DRAW;
 		}
 		/*Ai set*/
 		if( level == LEVEL1 )
