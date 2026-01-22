@@ -37,16 +37,20 @@ LoginSystem authRun( userInfo *user, int loginOpt )
 	case LOGIN:
 		
 		result = authLogin( db, user->userName, user->userPass );
+		printf("===%d-----------", admCount( db ));
 		sqlite3_close( db );
+		
 		return result;
+		
 	case REGISTER:
 		
-	    result = authRegister( db, user->userName, user->userPass );
+	    result = authRegister( db, 0, user->userName, user->userPass );
 		sqlite3_close( db );
 		return result;
 
 	default:
 		sqlite3_close( db );
+		result = LOGIN_ERROR;
 		return result;
 	}
 	
@@ -64,25 +68,45 @@ LoginSystem authOtp( LoginSystem result )
 		return NAME_EXIST;
 	}
 	return LOGIN_FAILED;
-
 }
 
-LoginSystem authRegister( sqlite3 *db, const char *username, 
-				 const char *password) 
+int admCount( sqlite3 *db )
+{
+	int rc;
+	sqlite3_stmt *stmt = NULL;
+	int count = -1;
+	const char *sql =
+		"SELECT COUNT(role) FROM users WHERE role = 0;";
+	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
+	if( rc != SQLITE_OK )
+	{
+		printf( "Prepare failed: %s", sqlite3_errmsg( db ) );
+		return -1;
+	}
+	if( sqlite3_step( stmt ) == SQLITE_ROW )
+	{
+		count = sqlite3_column_int( stmt, 0 );
+	}
+	return count;
+}
+
+LoginSystem authRegister( sqlite3 *db, const int role,  
+				const char *username, const char *password ) 
 {
 	int rc;
 	sqlite3_stmt *stmt = NULL;
 	const char *sql = 
-		"INSERT INTO users(username, password) VALUES (?, ?);";
+		"INSERT INTO users(role, username, password) VALUES (?,?, ?);";
 	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL);
 	if ( rc != SQLITE_OK )
 	{
 		printf( "Prepare failed: %s\n", sqlite3_errmsg(db) );
 		return -1;
 	}
-	
-	sqlite3_bind_text(  stmt, 1, username, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(  stmt, 2, password, -1, SQLITE_TRANSIENT);
+					 
+	sqlite3_bind_int(  stmt, 1, role);
+	sqlite3_bind_text(  stmt, 2, username, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(  stmt, 3, password, -1, SQLITE_TRANSIENT);
 	
 	rc = sqlite3_step( stmt );
 	
@@ -146,3 +170,5 @@ LoginSystem authLogin( sqlite3 *db, const char *username,
 	
 	return LOGIN_ERROR;
 }
+
+

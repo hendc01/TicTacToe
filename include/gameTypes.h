@@ -47,6 +47,16 @@ typedef enum
 	MENU_ERROR = 0,
 }GameTypes;
 
+typedef enum
+{
+	ADM_PVP = 1,
+	ADM_PVE = 2,
+	ADM_MODE = 3,
+	DELETE_ACCOUNT = 4,
+	ADD_ACCOUNT = 5,
+	EXIT = 6,
+}AdmTypes;
+
 typedef enum{
 	LEVEL_ERROR = 0,	
 	LEVEL_OK = 1,
@@ -64,6 +74,12 @@ typedef enum
 	STRING_ERROR = 1,
 	STRING_OK = 2,
 }SafeString;
+
+typedef enum
+{
+	ADM = 0,
+	PLAYER = 1,
+}Role;
 
 typedef struct
 {
@@ -83,6 +99,7 @@ typedef struct
 {
 	char userName[17];
 	char userPass[17];
+	Role userRole;
 }userInfo;
 
 

@@ -21,6 +21,7 @@ int authInitDB( sqlite3 **db )
 	const char *sql = 
 	"CREATE TABLE IF NOT EXISTS users ("
 	"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+	"role TEXT NOT NULL,"
 	"username TEXT UNIQUE NOT NULL,"
 	"password TEXT NOT NULL"
 	");";

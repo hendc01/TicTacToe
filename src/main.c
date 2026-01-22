@@ -26,8 +26,8 @@ int main( void )
 			authOtpMsg( authResult );
 		}
 	}
-	
-	game( &grid );
+	;
+	game( &grid, menuControler( user ) );
 	
 	return 0;
 }

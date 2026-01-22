@@ -7,25 +7,26 @@
 #include "menu.h"
 #include <stdio.h>
 /*Main controler*/
-void game ( board *grid )
+
+
+void game ( board *grid, GameTypes gameChoice)
 {
-	GameTypes gameType;
-	/*Returns Game Option*/
-	gameType = mainMenu();
+	/*Returns Game Option*/	
+
 	initializer( grid );
 	
-	switch ( gameType ) 
+	switch ( gameChoice ) 
 	{
 	case PLAYER_VS_PLAYER:
 		printBoard( grid );
 		gamePVPControler( grid );
 		break;
 	case PLAYER_VS_MACHINE:
-		gameType = pveMenu();
-		gamePvEControler( grid, gameType );
+		gameChoice = pveMenu();
+		gamePvEControler( grid, gameChoice );
 		break;
 	default:
-		printf("%d", gameType);
+		printf("%d", gameChoice);
 		break;
 	}
 }

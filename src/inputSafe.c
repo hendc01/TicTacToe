@@ -24,7 +24,7 @@ int intInput ( int min, int max )
 SafeString stringInput( char *buff, int size  )
 {
 	int overFlow = 0;
-	if( !fgets( buff , size, stdin  ) ) 
+	if( !fgets( buff , size + 1 , stdin  ) ) 
 	{
 		return STRING_ERROR;
 	}
