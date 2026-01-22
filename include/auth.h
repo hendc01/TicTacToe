@@ -4,9 +4,9 @@
 #include "gameTypes.h"
 int loginInput( userInfo *user );
 int authInitDB( sqlite3 **db );
-int authRegister( sqlite3 *db, const char *username, 
+LoginSystem authRegister( sqlite3 *db, const char *username, 
 				 const char *password);
-int authLogin( sqlite3 *db, const char *username, const char *password );
-int authRun( userInfo *user );
-
+LoginSystem authLogin( sqlite3 *db, const char *username, const char *password );
+LoginSystem authRun( userInfo *user, int loginOpt );
+LoginSystem authOtp( LoginSystem result );
 #endif

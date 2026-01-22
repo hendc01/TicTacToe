@@ -16,37 +16,58 @@ int loginInput( userInfo *user  )
 	return 1;
 }
 
-int authRun( userInfo *user )
+LoginSystem authRun( userInfo *user, int loginOpt )
 {
+	LoginSystem result;
 	sqlite3 *db = NULL;
 	if(authInitDB( &db ) != 0 )
 	{
-		return 1;
+		return DB_FAILED;
 	}
-	int loginOpt = -1; 
-	loginOpt = loginMenu( );
+	
+
+	if( loginOpt == -1 )
+	{
+		loginOpt = loginMenu( );
+	}
+
 	loginInput( user );
 	switch ( loginOpt )
 	{
 	case LOGIN:
 		
-		authLogin( db, user->userName, user->userPass );
+		result = authLogin( db, user->userName, user->userPass );
 		sqlite3_close( db );
-		break;
+		return result;
 	case REGISTER:
 		
-		authRegister( db, user->userName, user->userPass );
+	    result = authRegister( db, user->userName, user->userPass );
 		sqlite3_close( db );
-		break;
+		return result;
+
 	default:
 		sqlite3_close( db );
-		break;
+		return result;
 	}
-	return 0;
+	
 }
 
+/*Auth System output message*/
+LoginSystem authOtp( LoginSystem result )
+{
+	if( result == LOGIN_OK || result == REGISTER_OK )
+	{
+		return LOGIN_OK;
+	}
+	else if( result == NAME_EXIST )
+	{
+		return NAME_EXIST;
+	}
+	return LOGIN_FAILED;
 
-int authRegister( sqlite3 *db, const char *username, 
+}
+
+LoginSystem authRegister( sqlite3 *db, const char *username, 
 				 const char *password) 
 {
 	int rc;
@@ -71,17 +92,18 @@ int authRegister( sqlite3 *db, const char *username,
 	if( rc == SQLITE_CONSTRAINT )
 	{
 		/*Name exist*/
-		return 1; 
+		return NAME_EXIST; 
 	}
 	if( rc != SQLITE_DONE )
 	{
 		/*Unknown error*/
-		return -1;
+		return REGISTER_ERROR;
 	}
-	return 0;
+	return REGISTER_OK;
 }
 
-int authLogin( sqlite3 *db, const char *username, const char *password )
+LoginSystem authLogin( sqlite3 *db, const char *username, 
+					  const char *password )
 {
 	const char *sql;
 	sqlite3_stmt *stmt;
@@ -109,18 +131,18 @@ int authLogin( sqlite3 *db, const char *username, const char *password )
 		
 		sqlite3_finalize( stmt );
 		stmt = NULL;
-		
+		/*EQUAL*/
 		if( result == 0 )
 		{
-			return 0;
+			return LOGIN_OK;
 		}
 		else{
-			return 1;
+			return LOGIN_FAILED;
 		}
 	}
 	
 	sqlite3_finalize(stmt);
 	stmt = NULL;
 	
-	return 2;
+	return LOGIN_ERROR;
 }

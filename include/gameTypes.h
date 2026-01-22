@@ -2,6 +2,18 @@
 #define GAMETYPES_H
 
 /*Define the game main cell struct*/
+typedef enum
+{
+	LOGIN_OK,
+	LOGIN_FAILED,
+	LOGIN_ERROR,
+	REGISTER_OK,
+	REGISTER_ERROR,
+	NAME_EXIST,
+	DB_FAILED,
+	
+}LoginSystem;
+
 typedef enum 
 {
 	CELL_EMPTY = 0,

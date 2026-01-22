@@ -1,8 +1,7 @@
 #include "render.h"
 #include "gameTypes.h"
 #include <stdio.h>
-
-
+#include "auth.h"
 
 void converterCell( Cell cell)
 {
@@ -34,6 +33,7 @@ void converterState( GameResult result )
 		break;
 	case RESULT_DRAW:
 		printf( "DRAWN" );
+		break;
 	case RESULT_ERROR:
 		printf( "WIN ERROR" );
 		break;
@@ -81,6 +81,31 @@ void printBoard( const board *grid )
 }
 
 
-
+/*LOGIN*/
+/*Auth System output message*/
+void authOtpMsg( LoginSystem result )
+{
+	switch ( result ) 
+	{
+	case LOGIN_OK:
+		printf( "Welcome\n" );
+		break;
+	case REGISTER_OK:
+		printf( "Your account has been successfully created.\n " );
+		break;
+	case REGISTER_ERROR:
+		printf( "Registration error.\n" );
+		break;
+	case LOGIN_FAILED:
+		printf( "Wrong credentials.\n" );
+		break;
+	case NAME_EXIST:
+		printf( "Username unavailable.\n" );
+		break;
+	default:
+		printf( "Unknown error.\n" );
+		break;
+	}
+}
 
 

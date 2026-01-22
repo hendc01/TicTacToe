@@ -13,10 +13,10 @@ CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 WINDRESFLAGS = 
 RES      = TicTacToe_private.res
-OBJ      = src/game.o src/sqlite3.o src/auth.o src/main.o src/menu.o src/levels.o src/inputSafe.o src/sql.o src/render.o src/gameMode.o $(RES)
+OBJ      = src/auth.o src/inputSafe.o src/render.o src/gameMode.o src/sqlite3.o src/main.o src/game.o src/levels.o src/sql.o src/menu.o $(RES)
 BIN      = TicTacToe.exe
-LINKOBJ  = "src/game.o" "src/sqlite3.o" "src/auth.o" "src/main.o" "src/menu.o" "src/levels.o" "src/inputSafe.o" "src/sql.o" "src/render.o" "src/gameMode.o" "TicTacToe_private.res"
-CLEANOBJ = "src\game.o" "src\sqlite3.o" "src\auth.o" "src\main.o" "src\menu.o" "src\levels.o" "src\inputSafe.o" "src\sql.o" "src\render.o" "src\gameMode.o" "TicTacToe_private.res" "TicTacToe.exe"
+LINKOBJ  = "src/auth.o" "src/inputSafe.o" "src/render.o" "src/gameMode.o" "src/sqlite3.o" "src/main.o" "src/game.o" "src/levels.o" "src/sql.o" "src/menu.o" "TicTacToe_private.res"
+CLEANOBJ = "src\auth.o" "src\inputSafe.o" "src\render.o" "src\gameMode.o" "src\sqlite3.o" "src\main.o" "src\game.o" "src\levels.o" "src\sql.o" "src\menu.o" "TicTacToe_private.res" "TicTacToe.exe"
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -29,35 +29,35 @@ TicTacToe.exe: $(OBJ)
 
 	$(CC) $(LINKOBJ) -o "TicTacToe.exe" $(LIBS)
 
-src/game.o: src/game.c include/inputSafe.h include/gameTypes.h include/game.h include/menu.h include/levels.h include/gameMode.h include/render.h
-	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS) 
-
-src/sqlite3.o: src/sqlite3.c
-	$(CC) -c "src/sqlite3.c" -o "src/sqlite3.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/auth.o: src/auth.c include/inputSafe.h include/gameTypes.h include/menu.h include/auth.h include/sql.h include/sqlite3.h
+src/auth.o: src/auth.c include/sql.h include/inputSafe.h include/gameTypes.h include/auth.h include/sqlite3.h include/menu.h
 	$(CC) -c "src/auth.c" -o "src/auth.o" $(CFLAGS) 
 
-src/main.o: src/main.c include/inputSafe.h include/gameTypes.h include/game.h include/menu.h include/auth.h include/sqlite3.h
-	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/menu.o: src/menu.c include/inputSafe.h include/gameTypes.h include/menu.h include/auth.h include/sqlite3.h
-	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS) 
-
-src/levels.o: src/levels.c include/gameTypes.h include/game.h include/levels.h
-	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
-
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
-	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS) 
+	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/sql.o: src/sql.c include/sql.h include/sqlite3.h
-	$(CC) -c "src/sql.c" -o "src/sql.o" $(CFLAGS) 
-
-src/render.o: src/render.c include/gameTypes.h include/render.h
+src/render.o: src/render.c include/gameTypes.h include/auth.h include/render.h include/sqlite3.h
 	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS) 
 
 src/gameMode.o: src/gameMode.c include/gameTypes.h include/game.h include/gameMode.h
 	$(CC) -c "src/gameMode.c" -o "src/gameMode.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/sqlite3.o: src/sqlite3.c
+	$(CC) -c "src/sqlite3.c" -o "src/sqlite3.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/main.o: src/main.c include/inputSafe.h include/gameTypes.h include/game.h include/auth.h include/render.h include/sqlite3.h include/menu.h
+	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS) 
+
+src/game.o: src/game.c include/inputSafe.h include/gameTypes.h include/game.h include/levels.h include/render.h include/gameMode.h include/menu.h
+	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/levels.o: src/levels.c include/gameTypes.h include/game.h include/levels.h
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/sql.o: src/sql.c include/sql.h include/sqlite3.h
+	$(CC) -c "src/sql.c" -o "src/sql.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/menu.o: src/menu.c include/inputSafe.h include/gameTypes.h include/auth.h include/sqlite3.h include/menu.h
+	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 TicTacToe_private.res: TicTacToe_private.rc 
 	$(WINDRES) -i "TicTacToe_private.rc" --input-format=rc -o "TicTacToe_private.res" -O coff $(WINDRESFLAGS) 

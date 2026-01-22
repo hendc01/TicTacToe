@@ -41,15 +41,17 @@ GameResult gamePVPControler( board *grid )
 	}while( winner == RESULT_NOT_WIN  );
 	return winner;
 }
-/*Populate the board with Humans Input Moves*/
+/*Populate the board with Humans Input Moves, and returns the move 
+result. Which can be drawn, x, o, not a win or error*/
 GameResult humanTurn( board *grid, int *turn )
 {
 	GameResult winner = RESULT_NOT_WIN;
 	position ps;
 	State moveResult = MOVE_OCCUPIED;
-	
+	/*It runs the loop until doMove return a valid move (MOVE_OK)*/
 	while( moveResult != MOVE_OK  )
 	{
+	
 		ps = gameInput();
 		moveResult = doMove( grid, ps, turn );
 		
@@ -63,7 +65,7 @@ GameResult humanTurn( board *grid, int *turn )
 	}
 	return winner;
 }
-
+/*Controls the functions responsible for the Player vs Machine*/
 GameResult gamePvEControler( board *grid, GameTypes level )
 {
 	GameResult winner = RESULT_NOT_WIN;
@@ -71,23 +73,30 @@ GameResult gamePvEControler( board *grid, GameTypes level )
 	State moveResult;
 	int turn = 0;
 	printBoard( grid );
+	/*it runs until a winner is found or a Unknow error appear*/
 	while( winner == RESULT_NOT_WIN )
 	{
+		/*Takes the human input and checks if there has been a win*/
 		winner = humanTurn( grid, &turn );
 		if( winner != RESULT_NOT_WIN  )
 		{
 			break;
 		}
+		/*The level control switch to the correct LEVEL(AI dIFFICULT)
+		  And it returns thte position of the grid*/
 		ps = levelControler( grid, level, turn  );
 		if( ps.error == LEVEL_ERROR )
 		{
 			return RESULT_ERROR;
 		}
+		/*doMove stores the position in the array, and knows the player
+		by the number of turns played*/
 		moveResult = doMove( grid, ps, &turn );
 		if( moveResult != MOVE_OK )
 		{
 			displayMoveMsg( moveResult );
 		}
+		
 		winner = result( grid, turn );
 	} 
 	return winner;
