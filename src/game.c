@@ -6,10 +6,11 @@
 #include "gameMode.h"
 #include "menu.h"
 #include <stdio.h>
+#include "win.h"
 /*Main controler*/
 
-
-void game ( board *grid, GameTypes gameChoice)
+/*Run one session of the game*/
+GameResult game ( board *grid, GameTypes gameChoice)
 {
 	/*Returns Game Option*/	
 
@@ -19,15 +20,12 @@ void game ( board *grid, GameTypes gameChoice)
 	{
 	case PLAYER_VS_PLAYER:
 		printBoard( grid );
-		gamePVPControler( grid );
-		break;
+		return gamePVPControler( grid );
 	case PLAYER_VS_MACHINE:
 		gameChoice = pveMenu();
-		gamePvEControler( grid, gameChoice );
-		break;
+		return gamePvEControler( grid, gameChoice );
 	default:
-		printf("%d", gameChoice);
-		break;
+		return RESULT_ERROR;
 	}
 }
 /*Player vs Player controler*/
@@ -42,30 +40,7 @@ GameResult gamePVPControler( board *grid )
 	}while( winner == RESULT_NOT_WIN  );
 	return winner;
 }
-/*Populate the board with Humans Input Moves, and returns the move 
-result. Which can be drawn, x, o, not a win or error*/
-GameResult humanTurn( board *grid, int *turn )
-{
-	GameResult winner = RESULT_NOT_WIN;
-	position ps;
-	State moveResult = MOVE_OCCUPIED;
-	/*It runs the loop until doMove return a valid move (MOVE_OK)*/
-	while( moveResult != MOVE_OK  )
-	{
-	
-		ps = gameInput();
-		moveResult = doMove( grid, ps, turn );
-		
-		if( moveResult == MOVE_OK )
-		{
-			winner = result( grid, *turn );
-			break;
-		}
-		displayMoveMsg( moveResult );
-		
-	}
-	return winner;
-}
+
 /*Controls the functions responsible for the Player vs Machine*/
 GameResult gamePvEControler( board *grid, GameTypes level )
 {
@@ -102,7 +77,8 @@ GameResult gamePvEControler( board *grid, GameTypes level )
 	} 
 	return winner;
 }
-
+/*Control all the PVE levels by calling it according to the requested 
+Level*/
 position levelControler( board *grid ,GameTypes level,
 						int turn )
 {
@@ -123,7 +99,8 @@ position levelControler( board *grid ,GameTypes level,
 	}
 	return ps;
 }
-
+/*This move the board to next player by calling GridAlloc and iterating
+turn to pass the turn to the next player (x or o)*/
 State doMove( board *grid, position ps, int *turn )
 {
 	Cell currentPlayer = whoTurn( *turn );
@@ -132,35 +109,18 @@ State doMove( board *grid, position ps, int *turn )
 	{
 		return MOVE_OCCUPIED;
 	}
+	else if( result == MOVE_OUT_RANGE )
+	{
+		return MOVE_OUT_RANGE;
+	}
+	
 	printBoard( grid );
 	(*turn)++;
 	return MOVE_OK;
 }
 
-GameResult result( const board *grid, int turn )
-{
-	Cell winner = CELL_EMPTY;
-	winner = winChecker( grid );
-	
-	switch ( winner )
-	{
-	case CELL_X:
-		return RESULT_X_WINS;
-	case CELL_O:
-		return RESULT_O_WINS;
-	case CELL_EMPTY:
-		if( turn == 9 )
-		{
-			return RESULT_DRAW;
-			break;
-		}
-		return RESULT_NOT_WIN;
-		break;
-	}
-	return RESULT_ERROR;
-	
-}
-/*Makes the board move*/
+
+/*Assign to board cell array X or O, if within the range*/
 State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
 {
 	if( row < 0 || column < 0 || row > 2 || column > 2 )
@@ -172,7 +132,6 @@ State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
 		grid->boardGrid[row][column] = currentPlayer;
 		return MOVE_OK;
 	}
-
 	else
 	{
 		return MOVE_OCCUPIED;
@@ -184,20 +143,40 @@ Cell isCellEmpty( const board *grid, int r, int c )
 {
 	return grid->boardGrid[r][c];
 }
+/*Populate the board with Humans Input Moves, and returns the move 
+result. Which can be drawn, x, o, not a win or error*/
+GameResult humanTurn( board *grid, int *turn )
+{
+	GameResult winner = RESULT_NOT_WIN;
+	position ps;
+	State moveResult = MOVE_OCCUPIED;
+	/*It runs the loop until doMove return a valid move (MOVE_OK)*/
+	while( moveResult != MOVE_OK  )
+	{
+		
+		ps = gameInput();
+		moveResult = doMove( grid, ps, turn );
+		
+		if( moveResult == MOVE_OK )
+		{
+			winner = result( grid, *turn );
+			break;
+		}
+		displayMoveMsg( moveResult );
+		
+	}
+	return winner;
+}
 
+/*It returns the X or O based if the turn is even or odd*/
 Cell whoTurn( int turn )
 {
 	if( turn % 2 == 0 )
 	{
 		return CELL_X;
 	}
-	else if( turn % 2 != 0 )
-	{
-		return CELL_O;
-	}
-	return CELL_EMPTY;
+	return CELL_O;
 }
-
 
 /*Initialize all the array grid to ENUM Cell_Empyty*/
 void initializer ( board *grid )
@@ -212,107 +191,6 @@ void initializer ( board *grid )
 	}
 }
 
-Cell winChecker( const board *grid )
-{
-	/*Return cell_x, cell_o, cell_empty for drawn*/
-	Cell dResult = diagonalChecker( grid );
-	Cell vResult = verticalChecker( grid );
-	Cell hResult = horizontalChecker( grid );
-	if( dResult != CELL_EMPTY )
-	{
-		return dResult;
-	}
-	else if( vResult != CELL_EMPTY )
-	{
-		return vResult;
-	}
-	else if( hResult != CELL_EMPTY )
-	{
-		return hResult;
-	}
-	return CELL_EMPTY;
-}
-
-
-Cell horizontalChecker( const board *grid )
-{
-	for( int r = 0 ; r < 3 ; r++  )
-	{
-		Cell a = grid->boardGrid[r][0];
-		/*Check the first first collum and 3 rows*/
-		int standTest = ( a != CELL_EMPTY );
-		/*If its false it wont return a*/
-		for( int c = 1; c < 3 && standTest; c++ )
-		{
-			if (grid->boardGrid[r][c] != a)
-			{
-				standTest = 0;
-			}
-		}
-		/*If standTest comes here been true it means it passed the test
-		and i can return it without checking the other's(only one row
-		can be true at time)*/
-		if( standTest )
-		{
-			return a;
-		}
-	}
-	return CELL_EMPTY;
-}
-
-Cell verticalChecker( const board *grid )
-{
-	for( int c = 0 ; c < 3 ; c++  )
-	{
-		Cell a = grid->boardGrid[0][c];
-		/*Check the first first collum and 3 rows*/
-		int standTest = ( a != CELL_EMPTY );
-		/*If its false it wont return a*/
-		for( int r = 1; r < 3 && standTest; r++ )
-		{
-			if (grid->boardGrid[r][c] != a)
-			{
-				standTest = 0;
-			}
-		}
-		/*If standTest comes here been true it means it passed the test
-		and i can return it without checking the other's(only one row
-		can be true at time)*/
-		if( standTest )
-		{
-			return a;
-		}
-	}
-	return CELL_EMPTY;
-}
-
-Cell diagonalChecker(const board *grid)
-{
-	Cell a = grid->boardGrid[0][0]; 
-	Cell b = grid->boardGrid[0][2];
-
-	int standTest = (a != CELL_EMPTY);
-	int inverseTest = (b != CELL_EMPTY);
-	
-	for (int j = 0, k = 2; j < 3; j++, k--)
-	{
-		/* Main diagonal: (0,0), (1,1), (2,2)*/
-		if (grid->boardGrid[j][j] != a)
-			standTest = 0;
-		
-		/*Second diagonal: (0,2), (1,1), (2,0)*/
-		if (grid->boardGrid[j][k] != b)
-			inverseTest = 0;
-	}
-	
-	if (standTest)
-		return a;
-	
-	if (inverseTest)
-		return b;
-	
-	return CELL_EMPTY;
-}
 
 
 

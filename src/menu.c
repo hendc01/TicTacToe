@@ -4,8 +4,8 @@
 #include "auth.h"
 #include <stdio.h>
 		
-		
-GameTypes menuControler( userInfo user )
+/*Controler for Adm menus and Player menus*/
+GameTypes menuControler( userInfo user, sqlite3 *db )
 {
 	/*Returns Game Option*/
 	if( user.userRole != ADM )
@@ -15,12 +15,13 @@ GameTypes menuControler( userInfo user )
 	else
 	{
 		/*Supervisor modes*/
-		return admMenuController();
+		return admMenuController( db );
 	}
 	/*Supervisor Menus*/
 	
 }
-GameTypes admMenuController()
+/*Administrator functions controler*/
+GameTypes admMenuController( sqlite3 *db )
 {
 	AdmTypes menuChoice, admChoice;
 	
@@ -41,7 +42,7 @@ GameTypes admMenuController()
 			{
 				break;
 			}
-			admModeController( admChoice );
+			admModeController( admChoice, db );
 			break;
 		default:
 			break;
@@ -49,24 +50,26 @@ GameTypes admMenuController()
 	}	
 }
 		
-void admModeController( AdmTypes admType )
+void admModeController( AdmTypes admType, sqlite3 *db )
 {
+	userInfo user;
 	switch ( admType ) 
 	{
 	case DELETE_ACCOUNT:
 		//TODO
 		break;
 	case ADD_ACCOUNT:
-		//TODO
+		loginInput( &user );
+		authRegister( db, 0, user.userName, user.userPass);
 		break;
 	case EXIT:
 		break;
 	default:
-		//TODO
+		printf( "SUPERVISOR MODE ERROR.\n" );
 		break;
 	}
 }
-		
+/*Normal user Main menu*/	
 GameTypes mainMenu( void )
 {
 	printf("TIC-TAC-TOE\n");
@@ -75,7 +78,7 @@ GameTypes mainMenu( void )
 	printf( "TO BE UPDATE \n" );
 	return (GameTypes)intInput( 1, 2 );
 }
-		
+/*Administrator main Menu*/
 AdmTypes admMenu( void )
 {
 	printf("TIC-TAC-TOE\n");
@@ -84,16 +87,16 @@ AdmTypes admMenu( void )
 	printf( "(3) SUPERVISOR MODE\n \n" );
 	return (AdmTypes)intInput( 1, 3);
 }
-		
+/*Administrator sub-menu*/
 AdmTypes admMode( void )
 {
 	printf("SUPERVISOR MODE\n");
 	printf( "(1) DELETE ACCOUNT\n" );
 	printf( "(2) ADD ADM ACCOUNT\n" );
 	printf( "(3) EXIT\n" );
-	return (AdmTypes)intInput( 1, 3 );
+	return (AdmTypes)intInput( 1, 3 ) + 3;
 }
-		
+/*Player vs Machine Menu*/
 GameTypes pveMenu( void )
 {
 	int choice = 0;
@@ -103,8 +106,7 @@ GameTypes pveMenu( void )
 	choice = intInput( 1, 2 );
 	return ( choice == 1 ) ? LEVEL1 : LEVEL2;
 }
-/*Login*/
-		
+/*Login*/	
 LoginOpt loginMenu( void )
 {
 	printf( " TIC-TAC-TOE \n" );

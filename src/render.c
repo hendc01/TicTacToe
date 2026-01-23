@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "auth.h"
 
+/*Board Render*/
+/*Convert cell CELL_EMPTY, CELL_X and ...O for printboard() render*/
 void converterCell( Cell cell)
 {
 	switch ( cell ) 
@@ -21,7 +23,8 @@ void converterCell( Cell cell)
 		break;
 	}
 }
-void converterState( GameResult result )
+/*Converte GameResult to print the winner*/
+void converterResult( GameResult result )
 {
 	switch ( result ) 
 	{
@@ -42,7 +45,7 @@ void converterState( GameResult result )
 		break;
 	}
 }
-
+/*Prompt msg for Move attempt*/
 void displayMoveMsg( State moveResult )
 {
 	switch ( moveResult ) 
@@ -52,12 +55,16 @@ void displayMoveMsg( State moveResult )
 	case MOVE_OCCUPIED:
 		printf("Cell already occupied.\n");
 		break;
+	case MOVE_OUT_RANGE:
+		printf("Move out of range. Chose 1-3.\n");
+		break;	
 	default:
 		printf("MOVE ATTEMPT ERROR!\n");
 		break;
 	}
 }
 
+/*Prints the whole board for all board interations*/
 void printBoard( const board *grid )
 {
 	printf( "  1  2  3 \n" );

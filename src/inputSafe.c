@@ -1,6 +1,6 @@
 #include "inputSafe.h"
 #include "game.h"
-#include "string.h"
+#include <string.h>
 #include <stdio.h>
 
 /*Validate integer input and add a domain*/
@@ -24,7 +24,7 @@ int intInput ( int min, int max )
 SafeString stringInput( char *buff, int size  )
 {
 	int overFlow = 0;
-	if( !fgets( buff , size + 1 , stdin  ) ) 
+	if( !fgets( buff, size, stdin  ) ) 
 	{
 		return STRING_ERROR;
 	}
@@ -42,7 +42,7 @@ SafeString stringInput( char *buff, int size  )
 	}
 	return STRING_OK;
 }
-
+/*Call stringInput and checks if it is in the correct size for the DB */
 void userInput( char *userInfo, int size )
 {
 	SafeString stringOut = STRING_ERROR;
@@ -72,6 +72,16 @@ position gameInput()
 	ps.collum = intInput(1, 3) - 1;
 	
 	return ps;
+}
+
+/*Login and register credentials input*/
+int loginInput( userInfo *user  )
+{ 
+	printf( "Username:\n" );
+	userInput( user->userName, sizeof( user->userName ) );
+	printf( "Password\n" );
+	userInput( user->userPass, sizeof( user->userPass ) );
+	return 1;
 }
 
 void cleanBuffer ( void )

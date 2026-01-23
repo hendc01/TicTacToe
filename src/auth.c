@@ -7,24 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
-int loginInput( userInfo *user  )
-{ 
-	printf( "Username:\n" );
-	userInput( user->userName, sizeof( user->userName ) );
-	printf( "Password\n" );
-	userInput( user->userPass, sizeof( user->userPass ) );
-	return 1;
-}
-
-LoginSystem authRun( userInfo *user, int loginOpt )
+/*Login system controler*/
+LoginSystem authRun( userInfo *user, int loginOpt, sqlite3 *db )
 {
 	LoginSystem result;
-	sqlite3 *db = NULL;
-	if(authInitDB( &db ) != 0 )
-	{
-		return DB_FAILED;
-	}
-	
 
 	if( loginOpt == -1 )
 	{
@@ -36,20 +22,16 @@ LoginSystem authRun( userInfo *user, int loginOpt )
 	{
 	case LOGIN:
 		
-		result = authLogin( db, user->userName, user->userPass );
-		printf("===%d-----------", admCount( db ));
-		sqlite3_close( db );
-		
+		result = authLogin( db, user->userName, user->userPass, 
+						   &user->userRole );
 		return result;
 		
 	case REGISTER:
 		
-	    result = authRegister( db, 0, user->userName, user->userPass );
-		sqlite3_close( db );
+	    result = authRegister( db, 1, user->userName, user->userPass );
 		return result;
 
 	default:
-		sqlite3_close( db );
 		result = LOGIN_ERROR;
 		return result;
 	}
@@ -69,7 +51,7 @@ LoginSystem authOtp( LoginSystem result )
 	}
 	return LOGIN_FAILED;
 }
-
+/*Counts how many ADM there is in the DB users ( adm == 0)*/
 int admCount( sqlite3 *db )
 {
 	int rc;
@@ -87,21 +69,22 @@ int admCount( sqlite3 *db )
 	{
 		count = sqlite3_column_int( stmt, 0 );
 	}
+	sqlite3_finalize( stmt );
 	return count;
 }
-
+/*Insert the User credential to the data-base*/
 LoginSystem authRegister( sqlite3 *db, const int role,  
 				const char *username, const char *password ) 
 {
 	int rc;
 	sqlite3_stmt *stmt = NULL;
 	const char *sql = 
-		"INSERT INTO users(role, username, password) VALUES (?,?, ?);";
+		"INSERT INTO users(role, username, password) VALUES (?,?,?);";
 	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL);
 	if ( rc != SQLITE_OK )
 	{
 		printf( "Prepare failed: %s\n", sqlite3_errmsg(db) );
-		return -1;
+		return REGISTER_ERROR;
 	}
 					 
 	sqlite3_bind_int(  stmt, 1, role);
@@ -125,21 +108,22 @@ LoginSystem authRegister( sqlite3 *db, const int role,
 	}
 	return REGISTER_OK;
 }
-
+/*Select password from DB from Username and compare to the user 
+password input*/
 LoginSystem authLogin( sqlite3 *db, const char *username, 
-					  const char *password )
+					  const char *password, Role *role )
 {
 	const char *sql;
 	sqlite3_stmt *stmt;
 	
 	sql =
-		"SELECT password FROM users WHERE username = ?;";
+		"SELECT role, password FROM users WHERE username = ?;";
 	stmt = NULL;
 	int rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
 	if( rc != SQLITE_OK )
 	{
 		printf("Prepare failed: %s\n", sqlite3_errmsg( db ));
-		return -1;
+		return LOGIN_FAILED;
 	}
 	
 	sqlite3_bind_text(stmt, 1, username, -1, SQLITE_TRANSIENT );
@@ -148,9 +132,11 @@ LoginSystem authLogin( sqlite3 *db, const char *username,
 	
 	if( rc == SQLITE_ROW )
 	{
+		const char roleTemp = (Role)sqlite3_column_int( stmt, 0 );
 		const char *stored =
-			( const char *)sqlite3_column_text( stmt, 0 );
-			
+			( const char *)sqlite3_column_text( stmt, 1 );
+		/*sql owns the stored memory adress so its necessary to compare
+		before .._finalize*/
 		int result = strcmp( stored, password );
 		
 		sqlite3_finalize( stmt );
@@ -158,6 +144,7 @@ LoginSystem authLogin( sqlite3 *db, const char *username,
 		/*EQUAL*/
 		if( result == 0 )
 		{
+			*role = roleTemp;
 			return LOGIN_OK;
 		}
 		else{
@@ -171,4 +158,17 @@ LoginSystem authLogin( sqlite3 *db, const char *username,
 	return LOGIN_ERROR;
 }
 
-
+/*Delete user*/
+LoginSystem deleteUser( sqlite3 *db  )
+{
+	const char *sql;
+	sqlite3_stmt *stmt = NULL;
+	
+	sql = "DELETE FROM users WHERE username = ?;";
+	int	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
+	if( rc != SQLITE_OK )
+	{
+		printf("Prepare failed: %s\n", sqlite3_errmsg( db ));
+		return LOGIN_FAILED;
+	}
+}

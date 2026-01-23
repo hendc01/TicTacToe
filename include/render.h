@@ -5,5 +5,6 @@ void menu1 ( void );
 void converterCell( Cell cell);
 void printBoard( const board *grid );
 void authOtpMsg( LoginSystem result );
-void converterState( GameResult result );
+void converterResult( GameResult result );
+void displayMoveMsg( State moveResult );
 #endif
