@@ -42,7 +42,8 @@ SafeString stringInput( char *buff, int size  )
 	}
 	return STRING_OK;
 }
-/*Call stringInput and checks if it is in the correct size for the DB */
+/*Call stringInput and checks if it is in the correct size for the DB 
+FOR REGISTER FUNCTIONS*/
 void userInput( char *userInfo, int size )
 {
 	SafeString stringOut = STRING_ERROR;

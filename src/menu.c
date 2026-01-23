@@ -50,25 +50,7 @@ GameTypes admMenuController( sqlite3 *db )
 	}	
 }
 		
-void admModeController( AdmTypes admType, sqlite3 *db )
-{
-	userInfo user;
-	switch ( admType ) 
-	{
-	case DELETE_ACCOUNT:
-		//TODO
-		break;
-	case ADD_ACCOUNT:
-		loginInput( &user );
-		authRegister( db, 0, user.userName, user.userPass);
-		break;
-	case EXIT:
-		break;
-	default:
-		printf( "SUPERVISOR MODE ERROR.\n" );
-		break;
-	}
-}
+
 /*Normal user Main menu*/	
 GameTypes mainMenu( void )
 {

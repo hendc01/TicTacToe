@@ -158,25 +158,3 @@ LoginSystem authLogin( sqlite3 *db, const char *username,
 	return LOGIN_ERROR;
 }
 
-/*Delete user*/
-LoginSystem deleteUser( sqlite3 *db, const char *username  )
-{
-	const char *sql;
-	sqlite3_stmt *stmt = NULL;
-	
-	sql = "DELETE FROM users WHERE username = ?;";
-	int	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
-	if( rc != SQLITE_OK )
-	{
-		printf("Prepare failed: %s\n", sqlite3_errmsg( db ));
-		return LOGIN_FAILED;
-	}
-	sqlite3_bind_text( stmt, 1, username, -1, NULL );
-	rc = sqlite3_step( stmt );
-	sqlite3_finalize( stmt );
-	if( rc != SQLITE_DONE )
-	{
-		return DELETE_ERROR;
-	}
-	return DELETE_OK;
-}

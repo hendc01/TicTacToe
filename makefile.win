@@ -13,10 +13,10 @@ CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 WINDRESFLAGS = 
 RES      = TicTacToe_private.res
-OBJ      = src/auth.o src/inputSafe.o src/render.o src/gameMode.o src/sqlite3.o src/main.o src/game.o src/levels.o src/sql.o src/win.o src/menu.o $(RES)
+OBJ      = src/auth.o src/inputSafe.o src/supervisor.o src/render.o src/gameMode.o src/sqlite3.o src/main.o src/game.o src/levels.o src/sql.o src/win.o src/menu.o $(RES)
 BIN      = TicTacToe.exe
-LINKOBJ  = "src/auth.o" "src/inputSafe.o" "src/render.o" "src/gameMode.o" "src/sqlite3.o" "src/main.o" "src/game.o" "src/levels.o" "src/sql.o" "src/win.o" "src/menu.o" "TicTacToe_private.res"
-CLEANOBJ = "src\auth.o" "src\inputSafe.o" "src\render.o" "src\gameMode.o" "src\sqlite3.o" "src\main.o" "src\game.o" "src\levels.o" "src\sql.o" "src\win.o" "src\menu.o" "TicTacToe_private.res" "TicTacToe.exe"
+LINKOBJ  = "src/auth.o" "src/inputSafe.o" "src/supervisor.o" "src/render.o" "src/gameMode.o" "src/sqlite3.o" "src/main.o" "src/game.o" "src/levels.o" "src/sql.o" "src/win.o" "src/menu.o" "TicTacToe_private.res"
+CLEANOBJ = "src\auth.o" "src\inputSafe.o" "src\supervisor.o" "src\render.o" "src\gameMode.o" "src\sqlite3.o" "src\main.o" "src\game.o" "src\levels.o" "src\sql.o" "src\win.o" "src\menu.o" "TicTacToe_private.res" "TicTacToe.exe"
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -34,6 +34,9 @@ src/auth.o: src/auth.c include/sql.h include/inputSafe.h include/gameTypes.h inc
 
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS) 
+
+src/supervisor.o: src/supervisor.c include/inputSafe.h include/gameTypes.h include/auth.h include/sqlite3.h include/supervisor.h
+	$(CC) -c "src/supervisor.c" -o "src/supervisor.o" $(CFLAGS) 
 
 src/render.o: src/render.c include/gameTypes.h include/auth.h include/render.h include/sqlite3.h
 	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS) 

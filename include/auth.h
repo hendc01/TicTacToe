@@ -2,7 +2,7 @@
 #define AUTH_H
 #include "sqlite3.h"
 #include "gameTypes.h"
-int loginInput( userInfo *user );
+
 int authInitDB( sqlite3 **db );
 LoginSystem authRegister( sqlite3 *db, int role,  
 						 const char *username, const char *password );
