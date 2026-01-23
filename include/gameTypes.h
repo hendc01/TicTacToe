@@ -11,7 +11,8 @@ typedef enum
 	REGISTER_ERROR,
 	NAME_EXIST,
 	DB_FAILED,
-	
+	DELETE_ERROR,
+	DELETE_OK,
 }LoginSystem;
 
 typedef enum 
