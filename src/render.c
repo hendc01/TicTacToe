@@ -109,10 +109,26 @@ void authOtpMsg( LoginSystem result )
 	case NAME_EXIST:
 		printf( "Username unavailable.\n" );
 		break;
+	case DB_FAILED:
+		printf( "Database failed.\n" );
+		break;
+	case DELETE_ERROR:
+		printf( "Delete Error.\n" );
+		break;
+	case DELETE_OK:
+		printf( "Account Deleted.\n" );
+		break;
+	case USER_NOT_FOUND:
+		printf( "User not found.\n" );
+		break;
+	case USER_NOT_DELETED:
+		printf( "Account not deleted.\n" );
+		break;	
 	default:
 		printf( "Unknown error.\n" );
 		break;
 	}
 }
+
 
 

@@ -14,6 +14,7 @@ typedef enum
 	DELETE_ERROR,
 	DELETE_OK,
 	USER_NOT_FOUND,
+	USER_NOT_DELETED,
 }LoginSystem;
 
 typedef enum 

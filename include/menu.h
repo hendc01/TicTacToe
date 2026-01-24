@@ -8,7 +8,6 @@ GameTypes pveMenu( void );
 LoginOpt loginMenu( void );
 AdmTypes admMode( void );
 int runLogin( userInfo *user );
-void admModeController( AdmTypes admType, sqlite3 *db );
 GameTypes admMenuController( sqlite3 *db );
 GameTypes menuControler( userInfo user, sqlite3 *db );
 #endif

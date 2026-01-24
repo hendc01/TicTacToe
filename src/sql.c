@@ -5,8 +5,8 @@
 int authInitDB( sqlite3 **db )
 {
 	int rc;
+	char *err = NULL;
 	*db = NULL;
-	sqlite3_stmt *stmt = NULL;
 	
 	/*openning/creatin the data base*/
 	rc = sqlite3_open("users.db", db);
@@ -18,32 +18,33 @@ int authInitDB( sqlite3 **db )
 		return -1;
 	}
 	/*Creating a table for the database*/
-	const char *sql = 
+	sqlite3_exec( *db, "PRAGMA foreign_keys = ON;", NULL, NULL, &err);
+	const char *sqlUsers = 
 	"CREATE TABLE IF NOT EXISTS users ("
 	"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-	"role TEXT NOT NULL,"
+	"role INTEGER NOT NULL,"
 	"username TEXT UNIQUE NOT NULL,"
 	"password TEXT NOT NULL"
 	");";
-	
-	rc = sqlite3_prepare_v2( *db, sql, -1, &stmt, NULL );
-	if( rc != SQLITE_OK )
+	const char *sqlScores =
+	"CREATE TABLE IF NOT EXISTS scores("
+	"id_user INTEGER PRIMARY KEY,"
+	"wins INTEGER NOT NULL DEFAULT 0,"
+	"losses INTEGER NOT NULL DEFAULT 0,"
+	"draws INTEGER NOT NULL DEFAULT 0,"
+	"FOREIGN KEY(id_user) REFERENCES users(id) ON DELETE CASCADE"
+	");";
+	if (sqlite3_exec( *db, sqlUsers, NULL, NULL, &err) != SQLITE_OK)
 	{
-		printf( "Prepare failed: %s\n", sqlite3_errmsg( *db ) );
-		sqlite3_close( *db );
-		*db = NULL;
+		printf("SQL error (users): %s\n", err);
+		sqlite3_free(err);
 		return -1;
 	}
 	
-	rc = sqlite3_step( stmt );
-	sqlite3_finalize( stmt );
-	stmt = NULL;
-	
-	if( rc != SQLITE_DONE )
+	if (sqlite3_exec(*db, sqlScores, NULL, NULL, &err) != SQLITE_OK)
 	{
-		printf( "Table creation failed: %s\n", sqlite3_errmsg( *db ) );
-		sqlite3_close( *db );
-		*db = NULL;
+		printf("SQL error (scores): %s\n", err);
+		sqlite3_free(err);
 		return -1;
 	}
 	return 0;

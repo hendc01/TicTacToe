@@ -5,24 +5,22 @@
 #include "stdio.h"
 #include "auth.h"
 /*Controls the supervisor modes*/
-void admModeController( AdmTypes admType, sqlite3 *db )
+LoginSystem admModeController( AdmTypes admType, sqlite3 *db )
 {
 	userInfo user;
 	switch ( admType ) 
 	{
 	case DELETE_ACCOUNT:
-		runDeleteUser( db );
-		break;
+		return runDeleteUser( db );
 	case ADD_ACCOUNT:
 		loginInput( &user );
-		authRegister( db, 0, user.userName, user.userPass);
-		break;
+		return authRegister( db, 0, user.userName, user.userPass);
 	case EXIT:
 		break;
 	default:
-		printf( "SUPERVISOR MODE ERROR.\n" );
-		break;
+		return DB_FAILED;
 	}
+	return DB_FAILED;
 }
 /* Controller for deleting a user account 
 (input, validation, and DB call) */
@@ -38,7 +36,6 @@ LoginSystem runDeleteUser( sqlite3 *db )
 	confirm = getchar();
 	if( confirm == 'Y' || confirm == 'y' ) 
 	{
-		printf("fwefe");
 		rs = deleteUser( db, user.userName );
 		if( rs == USER_NOT_FOUND )
 		{
@@ -46,9 +43,9 @@ LoginSystem runDeleteUser( sqlite3 *db )
 		}
 		return DELETE_OK;
 	}
-	else if( confirm == 'n' || confirm == 'N'  ) 
+	else if( confirm != 'n' || confirm != 'N'  ) 
 	{
-		printf( "Input not recognized \n" );
+		return USER_NOT_DELETED;
 	}
 	return DELETE_ERROR;
 }

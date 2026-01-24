@@ -33,7 +33,8 @@ int main( void )
 			authResult = authRun( &user, REGISTER, db );
 			authOtpMsg( authResult );
 		}
-		while(1){
+		while(1)
+		{
 			winner = game( &grid, menuControler( user, db ) );
 			converterResult( winner );
 		}

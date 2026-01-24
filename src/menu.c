@@ -2,6 +2,8 @@
 #include "inputSafe.h"
 #include "gameTypes.h"
 #include "auth.h"
+#include "supervisor.h"
+#include "render.h"
 #include <stdio.h>
 		
 /*Controler for Adm menus and Player menus*/
@@ -27,6 +29,7 @@ GameTypes admMenuController( sqlite3 *db )
 	
 	while( 1 )
 	{
+		LoginSystem admResult;
 		menuChoice = admMenu();
 		switch ( menuChoice ) 
 		{
@@ -42,14 +45,14 @@ GameTypes admMenuController( sqlite3 *db )
 			{
 				break;
 			}
-			admModeController( admChoice, db );
+			admResult = admModeController( admChoice, db );
+			authOtpMsg( admResult );
 			break;
 		default:
 			break;
 		}
 	}	
 }
-		
 
 /*Normal user Main menu*/	
 GameTypes mainMenu( void )
