@@ -31,12 +31,25 @@ GameResult game ( board *grid, GameTypes gameChoice)
 /*Player vs Player controler*/
 GameResult gamePVPControler( board *grid )
 {
+	playerSymbol py;
 	GameResult winner = RESULT_NOT_WIN;
 	int turn = 0;
+	py = decideSymbol();
 	do
 	{
-		winner = humanTurn( grid, &turn );
-		
+		switch ( py.firstPlayer ) 
+		{
+		case PLAYER1_START:
+			winner = humanTurn( grid, &turn, py.player1 );
+			playerSwitch( &py.firstPlayer );
+			break;
+		case PLAYER2_START:
+			winner = humanTurn( grid, &turn, py.player2 );
+			playerSwitch( &py.firstPlayer );
+			break;
+		default:
+			break;
+		}	
 	}while( winner == RESULT_NOT_WIN  );
 	return winner;
 }
@@ -44,6 +57,8 @@ GameResult gamePVPControler( board *grid )
 /*Controls the functions responsible for the Player vs Machine*/
 GameResult gamePvEControler( board *grid, GameTypes level )
 {
+	playerSymbol py;
+	py = decideSymbol();
 	GameResult winner = RESULT_NOT_WIN;
 	position ps;
 	State moveResult;
@@ -52,28 +67,33 @@ GameResult gamePvEControler( board *grid, GameTypes level )
 	/*it runs until a winner is found or a Unknow error appear*/
 	while( winner == RESULT_NOT_WIN )
 	{
-		/*Takes the human input and checks if there has been a win*/
-		winner = humanTurn( grid, &turn );
-		if( winner != RESULT_NOT_WIN  )
+		switch ( py.firstPlayer ) 
 		{
+		case PLAYER1_START:
+			winner = humanTurn( grid, &turn, py.player1 );
+			if( winner != RESULT_NOT_WIN  )
+			{
+				break;
+			}
+			playerSwitch( &py.firstPlayer );
+			break;
+		case PLAYER2_START:
+			ps = levelControler( grid, level, turn  );
+			if( ps.error == LEVEL_ERROR )
+			{
+				return RESULT_ERROR;
+			}
+			moveResult = doMove( grid, ps, &turn, py.player2 );
+			if( moveResult != MOVE_OK )
+			{
+				displayMoveMsg( moveResult );
+			}
+			playerSwitch( &py.firstPlayer );
+			winner = result( grid, turn );
+			break;
+		default:
 			break;
 		}
-		/*The level control switch to the correct LEVEL(AI dIFFICULT)
-		  And it returns thte position of the grid*/
-		ps = levelControler( grid, level, turn  );
-		if( ps.error == LEVEL_ERROR )
-		{
-			return RESULT_ERROR;
-		}
-		/*doMove stores the position in the array, and knows the player
-		by the number of turns played*/
-		moveResult = doMove( grid, ps, &turn );
-		if( moveResult != MOVE_OK )
-		{
-			displayMoveMsg( moveResult );
-		}
-		
-		winner = result( grid, turn );
 	} 
 	return winner;
 }
@@ -101,10 +121,9 @@ position levelControler( board *grid ,GameTypes level,
 }
 /*This move the board to next player by calling GridAlloc and iterating
 turn to pass the turn to the next player (x or o)*/
-State doMove( board *grid, position ps, int *turn )
+State doMove( board *grid, position ps, int *turn, Cell symbol)
 {
-	Cell currentPlayer = whoTurn( *turn );
-	State result = gridAlloc( grid, ps.row, ps.collum, currentPlayer );
+	State result = gridAlloc( grid, ps.row, ps.collum, symbol );
 	if( result == MOVE_OCCUPIED )
 	{
 		return MOVE_OCCUPIED;
@@ -145,7 +164,7 @@ Cell isCellEmpty( const board *grid, int r, int c )
 }
 /*Populate the board with Humans Input Moves, and returns the move 
 result. Which can be drawn, x, o, not a win or error*/
-GameResult humanTurn( board *grid, int *turn )
+GameResult humanTurn( board *grid, int *turn, Cell symbol )
 {
 	GameResult winner = RESULT_NOT_WIN;
 	position ps;
@@ -155,7 +174,7 @@ GameResult humanTurn( board *grid, int *turn )
 	{
 		
 		ps = gameInput();
-		moveResult = doMove( grid, ps, turn );
+		moveResult = doMove( grid, ps, turn, symbol );
 		
 		if( moveResult == MOVE_OK )
 		{
@@ -176,6 +195,39 @@ Cell whoTurn( int turn )
 		return CELL_X;
 	}
 	return CELL_O;
+}
+playerSymbol decideSymbol( void )
+{
+	char pT;
+	playerSymbol p;
+	while(1)
+	{
+		printf( "Do you wanna play with X or O? Type(X or O): " );
+		scanf(" %c", &pT);
+		if( pT == 'X' || pT == 'x'  )
+		{
+			p.firstPlayer = PLAYER1_START;
+			p.player1 = CELL_X;
+			p.player2 = CELL_O;
+			return p;
+		}
+		else if( pT == 'o' || pT == 'O' )
+		{
+			p.firstPlayer = PLAYER2_START;
+			p.player2 = CELL_X;
+			p.player1 = CELL_O;
+			return p;
+		}
+		printf( " %c command not recognized. Please Type X or O \n"
+			   , pT );
+	}
+}
+
+
+void playerSwitch( Player *player )
+{
+	*player = ( *player == PLAYER1_START ) ? PLAYER2_START : 
+	PLAYER1_START;
 }
 
 /*Initialize all the array grid to ENUM Cell_Empyty*/

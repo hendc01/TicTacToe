@@ -14,6 +14,7 @@ int main( void )
 	srand( time( NULL ) );
 	board grid;
 	userInfo user;
+	ScoreInfo scoreInfo;
 	GameResult winner;
 	LoginSystem  authResult = LOGIN_FAILED;
 	sqlite3 *db = NULL;
@@ -32,15 +33,14 @@ int main( void )
 		{
 			authResult = authRun( &user, REGISTER, db );
 			authOtpMsg( authResult );
-		}
-		while(1)
-		{
-			winner = game( &grid, menuControler( user, db ) );
-			converterResult( winner );
-		}
-		
-	}
+		}	
 	
+	}
+	while(1)
+	{
+		winner = game( &grid, menuControler( user, db ) );
+		converterResult( winner );
+	}
 	sqlite3_close( db );
 	return 0;
 }

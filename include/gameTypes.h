@@ -17,6 +17,13 @@ typedef enum
 	USER_NOT_DELETED,
 }LoginSystem;
 
+typedef enum
+{
+	SCORE_DB_FAILED,
+	SCORE_DB_OK,
+	
+}ScoreDB;
+
 typedef enum 
 {
 	CELL_EMPTY = 0,
@@ -73,6 +80,13 @@ typedef enum
 
 typedef enum
 {
+	PLAYER1_START = 0,
+	PLAYER2_START = 1,
+	AI_START = 3,
+}Player;
+
+typedef enum
+{
 	STRING_TRUNCATED = 0,
 	STRING_ERROR = 1,
 	STRING_OK = 2,
@@ -100,11 +114,27 @@ typedef struct
 
 typedef struct
 {
+	int id;
 	char userName[17];
 	char userPass[17];
 	Role userRole;
 }userInfo;
 
+typedef struct
+{
+	int id;
+	int wins;
+	int losses;
+	int draws;
+}ScoreInfo;
+
+typedef struct
+{
+	Cell player1;
+	Cell player2;
+	Player firstPlayer;
+	
+}playerSymbol;
 
 #endif
 

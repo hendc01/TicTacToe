@@ -12,8 +12,10 @@ Cell whoTurn( int turn );
 position gameInput();
 GameResult result( const board *grid, int turn );
 GameResult gamePvEControler( board *grid, GameTypes level );
-GameResult humanTurn( board *grid, int *turn );
-State doMove(board *grid, position ps, int *turn);
+GameResult humanTurn( board *grid, int *turn, Cell symbol );
+State doMove(board *grid, position ps, int *turn, Cell symbol);
 position levelControler( board *grid ,GameTypes level,
 						int turn );
+playerSymbol decideSymbol( void );
+void playerSwitch( Player *player );
 #endif
