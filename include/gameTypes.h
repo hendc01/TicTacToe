@@ -80,9 +80,10 @@ typedef enum
 
 typedef enum
 {
-	PLAYER1_START = 0,
-	PLAYER2_START = 1,
-	AI_START = 3,
+	PLAYER1 = 0,
+	PLAYER2 = 1,
+	AI = 3,
+	BLANK = -1,
 }Player;
 
 typedef enum
@@ -132,9 +133,11 @@ typedef struct
 {
 	Cell player1;
 	Cell player2;
-	Player firstPlayer;
+	Player playerTurn;
+	Player winnerPy;
+	GameResult winnerCell;
 	
-}playerSymbol;
+}roundInfo;
 
 #endif
 

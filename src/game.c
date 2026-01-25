@@ -10,10 +10,11 @@
 /*Main controler*/
 
 /*Run one session of the game*/
-GameResult game ( board *grid, GameTypes gameChoice)
+roundInfo game ( board *grid, GameTypes gameChoice)
 {
 	/*Returns Game Option*/	
-
+	roundInfo py;
+	roundInit( &py );
 	initializer( grid );
 	
 	switch ( gameChoice ) 
@@ -25,77 +26,94 @@ GameResult game ( board *grid, GameTypes gameChoice)
 		gameChoice = pveMenu();
 		return gamePvEControler( grid, gameChoice );
 	default:
-		return RESULT_ERROR;
+		py.winnerCell = RESULT_ERROR;
+		return py;
 	}
 }
 /*Player vs Player controler*/
-GameResult gamePVPControler( board *grid )
+roundInfo gamePVPControler( board *grid )
 {
-	playerSymbol py;
-	GameResult winner = RESULT_NOT_WIN;
+	roundInfo py;
+	roundInit( &py );
 	int turn = 0;
 	py = decideSymbol();
 	do
 	{
-		switch ( py.firstPlayer ) 
+		switch ( py.playerTurn ) 
 		{
-		case PLAYER1_START:
-			winner = humanTurn( grid, &turn, py.player1 );
-			playerSwitch( &py.firstPlayer );
+		case PLAYER1:
+			py.winnerCell = humanTurn( grid, &turn, py.player1 );
+			playerSwitch( &py.playerTurn );
 			break;
-		case PLAYER2_START:
-			winner = humanTurn( grid, &turn, py.player2 );
-			playerSwitch( &py.firstPlayer );
+		case PLAYER2:
+			py.winnerCell = humanTurn( grid, &turn, py.player2 );
+			playerSwitch( &py.playerTurn );
 			break;
 		default:
 			break;
 		}	
-	}while( winner == RESULT_NOT_WIN  );
-	return winner;
+	}while( py.winnerCell == RESULT_NOT_WIN  );
+	return py;
 }
 
 /*Controls the functions responsible for the Player vs Machine*/
-GameResult gamePvEControler( board *grid, GameTypes level )
+roundInfo gamePvEControler( board *grid, GameTypes level )
 {
-	playerSymbol py;
+	roundInfo py;
 	py = decideSymbol();
-	GameResult winner = RESULT_NOT_WIN;
+	roundInit( &py );
 	position ps;
 	State moveResult;
 	int turn = 0;
+	
+	
 	printBoard( grid );
 	/*it runs until a winner is found or a Unknow error appear*/
-	while( winner == RESULT_NOT_WIN )
+	while( py.winnerCell == RESULT_NOT_WIN )
 	{
-		switch ( py.firstPlayer ) 
+		switch ( py.playerTurn ) 
 		{
-		case PLAYER1_START:
-			winner = humanTurn( grid, &turn, py.player1 );
-			if( winner != RESULT_NOT_WIN  )
+		case PLAYER1:
+			py.winnerPy = PLAYER1;
+			py.winnerCell = humanTurn( grid, &turn, py.player1 );
+			if( py.winnerCell != RESULT_NOT_WIN  )
 			{
-				break;
+				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
+				BLANK : PLAYER1;
+				return py;
 			}
-			playerSwitch( &py.firstPlayer );
+			playerSwitch( &py.playerTurn );
 			break;
-		case PLAYER2_START:
+		case PLAYER2:
+			py.winnerPy = PLAYER2;
 			ps = levelControler( grid, level, turn  );
 			if( ps.error == LEVEL_ERROR )
 			{
-				return RESULT_ERROR;
+				py.winnerPy = BLANK;
+				py.winnerCell = RESULT_ERROR;
+				return py;
 			}
 			moveResult = doMove( grid, ps, &turn, py.player2 );
 			if( moveResult != MOVE_OK )
 			{
 				displayMoveMsg( moveResult );
 			}
-			playerSwitch( &py.firstPlayer );
-			winner = result( grid, turn );
+			
+			py.winnerCell = result( grid, turn );
+			if (py.winnerCell != RESULT_NOT_WIN)
+			{
+				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
+				BLANK : PLAYER2;
+				return py;
+			}
+			playerSwitch( &py.playerTurn );
 			break;
 		default:
-			break;
+			py.winnerPy = BLANK;
+			return py;
 		}
 	} 
-	return winner;
+	return py;
 }
 /*Control all the PVE levels by calling it according to the requested 
 Level*/
@@ -196,24 +214,24 @@ Cell whoTurn( int turn )
 	}
 	return CELL_O;
 }
-playerSymbol decideSymbol( void )
+roundInfo decideSymbol( void )
 {
 	char pT;
-	playerSymbol p;
+	roundInfo p;
 	while(1)
 	{
 		printf( "Do you wanna play with X or O? Type(X or O): " );
 		scanf(" %c", &pT);
 		if( pT == 'X' || pT == 'x'  )
 		{
-			p.firstPlayer = PLAYER1_START;
+			p.playerTurn = PLAYER1;
 			p.player1 = CELL_X;
 			p.player2 = CELL_O;
 			return p;
 		}
 		else if( pT == 'o' || pT == 'O' )
 		{
-			p.firstPlayer = PLAYER2_START;
+			p.playerTurn = PLAYER2;
 			p.player2 = CELL_X;
 			p.player1 = CELL_O;
 			return p;
@@ -226,8 +244,8 @@ playerSymbol decideSymbol( void )
 
 void playerSwitch( Player *player )
 {
-	*player = ( *player == PLAYER1_START ) ? PLAYER2_START : 
-	PLAYER1_START;
+	*player = ( *player == PLAYER1 ) ? PLAYER2 : 
+	PLAYER1;
 }
 
 /*Initialize all the array grid to ENUM Cell_Empyty*/
@@ -243,7 +261,12 @@ void initializer ( board *grid )
 	}
 }
 
+void roundInit( roundInfo *r )
+{
+	r->player1 = CELL_EMPTY;
+	r->player2 = CELL_EMPTY;
+	r->playerTurn = BLANK;
+	r->winnerPy = BLANK;
+	r->winnerCell = RESULT_NOT_WIN;
 
-
-
-
+}
