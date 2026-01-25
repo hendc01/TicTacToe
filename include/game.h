@@ -16,7 +16,7 @@ GameResult humanTurn( board *grid, int *turn, Cell symbol );
 State doMove(board *grid, position ps, int *turn, Cell symbol);
 position levelControler( board *grid ,GameTypes level,
 						int turn );
-void roundInit( roundInfo* py );
-roundInfo decideSymbol( void );
+roundInfo roundInit( void );
+void decideSymbol( roundInfo *py );
 void playerSwitch( Player *player );
 #endif

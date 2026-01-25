@@ -12,10 +12,11 @@
 int main( void )
 {
 	srand( time( NULL ) );
+	roundInfo py;
 	board grid;
 	userInfo user;
 	ScoreInfo scoreInfo;
-	GameResult winner;
+
 	LoginSystem  authResult = LOGIN_FAILED;
 	sqlite3 *db = NULL;
 	if(authInitDB( &db ) != 0 )
@@ -38,8 +39,8 @@ int main( void )
 	}
 	while(1)
 	{
-		winner = game( &grid, menuControler( user, db ) );
-		converterResult( winner );
+		py = game( &grid, menuControler( user, db ) );
+		converterResult( py.winnerCell );
 	}
 	sqlite3_close( db );
 	return 0;

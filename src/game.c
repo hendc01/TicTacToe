@@ -14,7 +14,7 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 {
 	/*Returns Game Option*/	
 	roundInfo py;
-	roundInit( &py );
+	py = roundInit( );
 	initializer( grid );
 	
 	switch ( gameChoice ) 
@@ -34,9 +34,9 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 roundInfo gamePVPControler( board *grid )
 {
 	roundInfo py;
-	roundInit( &py );
+	py =  roundInit( );
 	int turn = 0;
-	py = decideSymbol();
+	decideSymbol( &py );
 	do
 	{
 		switch ( py.playerTurn ) 
@@ -60,8 +60,8 @@ roundInfo gamePVPControler( board *grid )
 roundInfo gamePvEControler( board *grid, GameTypes level )
 {
 	roundInfo py;
-	py = decideSymbol();
-	roundInit( &py );
+	py =  roundInit( );
+	decideSymbol( &py );
 	position ps;
 	State moveResult;
 	int turn = 0;
@@ -214,30 +214,33 @@ Cell whoTurn( int turn )
 	}
 	return CELL_O;
 }
-roundInfo decideSymbol( void )
+void decideSymbol( roundInfo *p )
 {
 	char pT;
-	roundInfo p;
 	while(1)
 	{
 		printf( "Do you wanna play with X or O? Type(X or O): " );
 		scanf(" %c", &pT);
 		if( pT == 'X' || pT == 'x'  )
 		{
-			p.playerTurn = PLAYER1;
-			p.player1 = CELL_X;
-			p.player2 = CELL_O;
-			return p;
+			p->playerTurn = PLAYER1;
+			p->player1 = CELL_X;
+			p->player2 = CELL_O;
+			break;
 		}
 		else if( pT == 'o' || pT == 'O' )
 		{
-			p.playerTurn = PLAYER2;
-			p.player2 = CELL_X;
-			p.player1 = CELL_O;
-			return p;
+			p->playerTurn = PLAYER2;
+			p->player2 = CELL_X;
+			p->player1 = CELL_O;
+			break;
 		}
-		printf( " %c command not recognized. Please Type X or O \n"
-			   , pT );
+		else
+		{
+			printf( " %c command not recognized. Please Type X or O \n"
+				   , pT );	
+		}
+		
 	}
 }
 
@@ -261,12 +264,14 @@ void initializer ( board *grid )
 	}
 }
 
-void roundInit( roundInfo *r )
+roundInfo roundInit( void )
 {
-	r->player1 = CELL_EMPTY;
-	r->player2 = CELL_EMPTY;
-	r->playerTurn = BLANK;
-	r->winnerPy = BLANK;
-	r->winnerCell = RESULT_NOT_WIN;
+	roundInfo r;
+	r.player1 = CELL_EMPTY;
+	r.player2 = CELL_EMPTY;
+	r.playerTurn = BLANK;
+	r.winnerPy = BLANK;
+	r.winnerCell = RESULT_NOT_WIN;
+	return r;
 
 }
