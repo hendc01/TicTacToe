@@ -22,8 +22,8 @@ GameResult result( const board *grid, int turn )
 		break;
 	}
 	return RESULT_ERROR;
-	
 }
+
 /*Call the checker functions and return whether someone won or 
 Cell empty*/
 Cell winChecker( const board *grid )
@@ -64,7 +64,7 @@ Cell horizontalChecker( const board *grid )
 			}
 		}
 		/*If standTest comes here been true it means it passed the test
-		and i can return it without checking the other's(only one row
+		and it can return it without checking the other's(only one row
 		can be true at time)*/
 		if( standTest )
 		{

@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "auth.h"
 #include "render.h"
+#include "score.h"
 
 
 int main( void )
@@ -15,7 +16,7 @@ int main( void )
 	roundInfo py;
 	board grid;
 	userInfo user;
-	ScoreInfo scoreInfo;
+	ScoreInfo roundScore[2];
 
 	LoginSystem  authResult = LOGIN_FAILED;
 	sqlite3 *db = NULL;
@@ -29,18 +30,22 @@ int main( void )
 		/*-1 DEFAULT ARGUMENT. IT DOESNT HAVE A DIRECT EFFECT*/
 		authResult = authRun( &user, -1, db );
 		authOtpMsg( authResult );
+		
 		/*NAME_EXIST ONLY HAPPENS DURING REGISTER*/
 		if( authResult == NAME_EXIST )
 		{
 			authResult = authRun( &user, REGISTER, db );
+			roundScore[PLAYER1].id = user.id; 
 			authOtpMsg( authResult );
 		}	
 	
 	}
 	while(1)
-	{
+	{	/*Return roundInfo*/
+		roundScore[PLAYER1].id = user.id; 
 		py = game( &grid, menuControler( user, db ) );
 		converterResult( py.winnerCell );
+		printf("%d", scoreControler( db, py, roundScore ));
 	}
 	sqlite3_close( db );
 	return 0;

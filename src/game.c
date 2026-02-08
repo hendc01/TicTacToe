@@ -80,6 +80,7 @@ roundInfo gamePvEControler( board *grid, GameTypes level )
 			{
 				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
 				BLANK : PLAYER1;
+				py.losserPy = PLAYER2;
 				return py;
 			}
 			playerSwitch( &py.playerTurn );
@@ -104,6 +105,7 @@ roundInfo gamePvEControler( board *grid, GameTypes level )
 			{
 				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
 				BLANK : PLAYER2;
+				py.losserPy = PLAYER2;
 				return py;
 			}
 			playerSwitch( &py.playerTurn );
@@ -228,7 +230,7 @@ void decideSymbol( roundInfo *p )
 			p->player2 = CELL_O;
 			break;
 		}
-		else if( pT == 'o' || pT == 'O' )
+		else if( pT == 'o' || pT == 'O' || pT == '0' )
 		{
 			p->playerTurn = PLAYER2;
 			p->player2 = CELL_X;
@@ -243,7 +245,6 @@ void decideSymbol( roundInfo *p )
 		
 	}
 }
-
 
 void playerSwitch( Player *player )
 {
@@ -272,6 +273,7 @@ roundInfo roundInit( void )
 	r.playerTurn = BLANK;
 	r.winnerPy = BLANK;
 	r.winnerCell = RESULT_NOT_WIN;
+	r.losserPy = BLANK;
 	return r;
 
 }

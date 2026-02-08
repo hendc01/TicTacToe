@@ -99,6 +99,14 @@ typedef enum
 	PLAYER = 1,
 }Role;
 
+typedef enum
+{
+	HW = 0,
+	VT = 1,
+	D1 = 2,
+	D2 = 3,
+}WinPt;
+
 typedef struct
 {
 	int row;
@@ -135,9 +143,16 @@ typedef struct
 	Cell player2;
 	Player playerTurn;
 	Player winnerPy;
+	Player losserPy;
 	GameResult winnerCell;
-	
+	 
 }roundInfo;
+
+typedef struct
+{
+	int win;
+	Cell simbol;
+}winInfo;
 
 #endif
 
