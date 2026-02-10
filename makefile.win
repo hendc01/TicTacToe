@@ -13,10 +13,10 @@ CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 WINDRESFLAGS = 
 RES      = TicTacToe_private.res
-OBJ      = src/menu.o src/game.o src/supervisor.o src/render.o src/win.o src/gameMode.o src/score.o src/sql.o src/auth.o src/levels.o src/inputSafe.o src/main.o src/sqlite3.o $(RES)
+OBJ      = src/menu.o src/game.o src/supervisor.o src/render.o src/win.o src/gameMode.o src/score.o src/sql.o src/auth.o src/levels.o src/inputSafe.o src/innit.o src/main.o src/sqlite3.o $(RES)
 BIN      = TicTacToe.exe
-LINKOBJ  = "src/menu.o" "src/game.o" "src/supervisor.o" "src/render.o" "src/win.o" "src/gameMode.o" "src/score.o" "src/sql.o" "src/auth.o" "src/levels.o" "src/inputSafe.o" "src/main.o" "src/sqlite3.o" "TicTacToe_private.res"
-CLEANOBJ = "src\menu.o" "src\game.o" "src\supervisor.o" "src\render.o" "src\win.o" "src\gameMode.o" "src\score.o" "src\sql.o" "src\auth.o" "src\levels.o" "src\inputSafe.o" "src\main.o" "src\sqlite3.o" "TicTacToe_private.res" "TicTacToe.exe"
+LINKOBJ  = "src/menu.o" "src/game.o" "src/supervisor.o" "src/render.o" "src/win.o" "src/gameMode.o" "src/score.o" "src/sql.o" "src/auth.o" "src/levels.o" "src/inputSafe.o" "src/innit.o" "src/main.o" "src/sqlite3.o" "TicTacToe_private.res"
+CLEANOBJ = "src\menu.o" "src\game.o" "src\supervisor.o" "src\render.o" "src\win.o" "src\gameMode.o" "src\score.o" "src\sql.o" "src\auth.o" "src\levels.o" "src\inputSafe.o" "src\innit.o" "src\main.o" "src\sqlite3.o" "TicTacToe_private.res" "TicTacToe.exe"
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -32,7 +32,7 @@ TicTacToe.exe: $(OBJ)
 src/menu.o: src/menu.c include/auth.h include/sqlite3.h include/gameTypes.h include/render.h include/menu.h include/supervisor.h include/inputSafe.h
 	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/game.o: src/game.c include/sqlite3.h include/gameTypes.h include/render.h include/gameMode.h include/menu.h include/levels.h include/win.h include/inputSafe.h include/game.h
+src/game.o: src/game.c include/sqlite3.h include/gameTypes.h include/innit.h include/render.h include/gameMode.h include/menu.h include/levels.h include/win.h include/inputSafe.h include/game.h
 	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS) 
 
 src/supervisor.o: src/supervisor.c include/auth.h include/sqlite3.h include/gameTypes.h include/supervisor.h include/inputSafe.h
@@ -61,6 +61,9 @@ src/levels.o: src/levels.c include/gameTypes.h include/levels.h include/win.h in
 
 src/inputSafe.o: src/inputSafe.c include/gameTypes.h include/inputSafe.h include/game.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/innit.o: src/innit.c include/gameTypes.h include/innit.h
+	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS) 
 
 src/main.o: src/main.c include/auth.h include/sqlite3.h include/score.h include/gameTypes.h include/render.h include/menu.h include/inputSafe.h include/game.h
 	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS) 

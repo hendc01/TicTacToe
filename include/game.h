@@ -3,7 +3,6 @@
 #include "gameTypes.h"
 
 roundInfo game ( board *grid, GameTypes gameChoices );
-void initializer ( board *grid );
 Cell isCellEmpty( const board *grid, int r, int c );
 void menu1 ( void );
 void gamePVPControler( board *grid, roundInfo *rInfo	);
@@ -14,9 +13,6 @@ GameResult result( const board *grid, int turn );
 void gamePvEControler( board *grid, GameTypes level, 
 						   roundInfo *rInfo );
 State doMove(board *grid, position ps, int *turn, Cell symbol);
-position levelControler( board *grid ,GameTypes level,
-						int turn );
-roundInfo roundInit( void );
 void decideSymbol( roundInfo *py );
 void playerSwitch( Player *playerTurn );
 Cell symbolSwitch( roundInfo r );

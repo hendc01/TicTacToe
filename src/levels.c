@@ -4,6 +4,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "win.h"
+
+position levelControler( board *grid ,GameTypes level,
+						int turn )
+{
+	position ps;
+	switch ( level ) 
+	{
+	case LEVEL1:
+		ps = level1( grid );
+		break;
+	case LEVEL2:
+		ps = level2( grid, whoTurn( turn ) );
+		break;
+	default:
+		ps.row = -1;
+		ps.collum = -1;
+		ps.error = LEVEL_ERROR;
+		break;
+	}
+	return ps;
+}
+
 /*Returns position(row and column) for AI level1 (pseudo-radom moves)*/
 position level1( const board *grid )
 {	

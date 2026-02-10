@@ -7,6 +7,7 @@
 #include "menu.h"
 #include <stdio.h>
 #include "win.h"
+#include "innit.h"
 /*Main controler*/
 
 /*Run one session of the game*/
@@ -15,7 +16,7 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 	/*Returns Game Option*/	
 	roundInfo py;
 	py = roundInit( );
-	initializer( grid );
+	gridInnit( grid );
 	
 	switch ( gameChoice ) 
 	{
@@ -111,26 +112,7 @@ void gamePvEControler( board *grid, GameTypes level,
 }
 /*Control all the PVE levels by calling it according to the requested 
 Level*/
-position levelControler( board *grid ,GameTypes level,
-						int turn )
-{
-	position ps;
-	switch ( level ) 
-	{
-	case LEVEL1:
-		ps = level1( grid );
-		break;
-	case LEVEL2:
-		ps = level2( grid, whoTurn( turn ) );
-		break;
-	default:
-		ps.row = -1;
-		ps.collum = -1;
-		ps.error = LEVEL_ERROR;
-		break;
-	}
-	return ps;
-}
+
 /*This move the board to next player by calling GridAlloc and iterating
 turn to pass the turn to the next player (x or o)*/
 State doMove( board *grid, position ps, int *turn, Cell symbol)
@@ -173,14 +155,6 @@ readable, due to the function name)*/
 Cell isCellEmpty( const board *grid, int r, int c )
 {
 	return grid->boardGrid[r][c];
-}
-
-
-/*Populate the board with Humans Input Moves, and returns the move 
-result. Which can be drawn, x, o, not a win or error*/
-State humanTurn( board *grid, position ps ,int *turn, Cell symbol )
-{
-  return doMove( grid, ps, turn, symbol );
 }
 
 /*It returns the X or O based if the turn is even or odd*/
@@ -234,29 +208,4 @@ Cell symbolSwitch( roundInfo r )
 	return ( r.playerTurn == PLAYER1 ) ? r.player1 : r.player2;
 }
 
-/*Initialize all the array grid to ENUM Cell_Empyty*/
-void initializer ( board *grid )
-{
-	
-	for( int r = 0 ; r < 3; r++ )
-	{
-		for( int c = 0 ; c < 3; c++ )
-		{
-			grid->boardGrid[r][c] = CELL_EMPTY;
-		}
-	}
-}
 
-roundInfo roundInit( void )
-{
-	roundInfo r;
-	r.player1 = CELL_EMPTY;
-	r.player2 = CELL_EMPTY;
-	r.turnCell = CELL_O;
-	r.playerTurn = BLANK;
-	r.winnerPy = BLANK;
-	r.winnerCell = RESULT_NOT_WIN;
-	r.losserPy = BLANK;
-	return r;
-
-}
