@@ -21,101 +21,93 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 	{
 	case PLAYER_VS_PLAYER:
 		printBoard( grid );
-		return gamePVPControler( grid );
+		gamePVPControler( grid, &py );
+		return py;
+		
 	case PLAYER_VS_MACHINE:
 		gameChoice = pveMenu();
-		return gamePvEControler( grid, gameChoice );
+		gamePvEControler( grid, gameChoice, &py);
+		return py;
+		
 	default:
 		py.winnerCell = RESULT_ERROR;
 		return py;
 	}
 }
-/*Player vs Player controler*/
-roundInfo gamePVPControler( board *grid )
+/*
+  Player vs Player controler
+  -First turn is decided by decideSymbol(player1 choice), after it 
+  by playerSwitch 
+  -humanTurn populate the board with user input and check for a win with
+   result() function, scanning all the board for a win return ENUM
+  (GameResult)
+*/
+roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
+							int *turn)
 {
-	roundInfo py;
-	py =  roundInit( );
-	int turn = 0;
-	decideSymbol( &py );
-	do
+	State roundState;
+
+    roundState = doMove( grid, ps ,turn, 
+						symbolSwitch(*py) );
+	if( roundState != MOVE_OK )
 	{
-		switch ( py.playerTurn ) 
-		{
-		case PLAYER1:
-			py.winnerCell = humanTurn( grid, &turn, py.player1 );
-			playerSwitch( &py.playerTurn );
-			break;
-		case PLAYER2:
-			py.winnerCell = humanTurn( grid, &turn, py.player2 );
-			playerSwitch( &py.playerTurn );
-			break;
-		default:
-			break;
-		}	
-	}while( py.winnerCell == RESULT_NOT_WIN  );
-	return py;
+		displayMoveMsg(roundState);
+		return *py;
+	}
+	py->winnerCell = result( grid, *turn );
+	if( py->winnerCell == RESULT_NOT_WIN )
+	{
+		playerSwitch( &py->playerTurn );
+	}
+	else if( py->winnerCell != RESULT_DRAW)
+	{
+		py->winnerPy = py->playerTurn;
+		py->losserPy = (py->playerTurn == PLAYER1)? PLAYER2 : PLAYER1;
+	}
+	return *py;
+}
+void gamePVPControler( board *grid, roundInfo *rInfo )
+{
+	*rInfo = roundInit( );
+	int turn = 0;
+	position ps;
+	decideSymbol( rInfo );
+	while(rInfo->winnerCell == RESULT_NOT_WIN)
+	{
+		ps = gameInput();
+		gameModeControler( grid, ps, rInfo, &turn );
+	}
 }
 
 /*Controls the functions responsible for the Player vs Machine*/
-roundInfo gamePvEControler( board *grid, GameTypes level )
+void gamePvEControler( board *grid, GameTypes level, 
+						   roundInfo *rInfo )
 {
-	roundInfo py;
-	py =  roundInit( );
-	decideSymbol( &py );
-	position ps;
-	State moveResult;
 	int turn = 0;
-	
+	*rInfo = roundInit( );
+
+	decideSymbol( rInfo );
+	position ps;
 	
 	printBoard( grid );
+	
 	/*it runs until a winner is found or a Unknow error appear*/
-	while( py.winnerCell == RESULT_NOT_WIN )
+	while( rInfo->winnerCell == RESULT_NOT_WIN )
 	{
-		switch ( py.playerTurn ) 
+		switch ( rInfo->playerTurn ) 
 		{
 		case PLAYER1:
-			py.winnerPy = PLAYER1;
-			py.winnerCell = humanTurn( grid, &turn, py.player1 );
-			if( py.winnerCell != RESULT_NOT_WIN  )
-			{
-				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
-				BLANK : PLAYER1;
-				py.losserPy = PLAYER2;
-				return py;
-			}
-			playerSwitch( &py.playerTurn );
+			ps = gameInput();
 			break;
 		case PLAYER2:
-			py.winnerPy = PLAYER2;
-			ps = levelControler( grid, level, turn  );
-			if( ps.error == LEVEL_ERROR )
-			{
-				py.winnerPy = BLANK;
-				py.winnerCell = RESULT_ERROR;
-				return py;
-			}
-			moveResult = doMove( grid, ps, &turn, py.player2 );
-			if( moveResult != MOVE_OK )
-			{
-				displayMoveMsg( moveResult );
-			}
-			
-			py.winnerCell = result( grid, turn );
-			if (py.winnerCell != RESULT_NOT_WIN)
-			{
-				py.winnerPy = (py.winnerCell == RESULT_DRAW) ? 
-				BLANK : PLAYER2;
-				py.losserPy = PLAYER2;
-				return py;
-			}
-			playerSwitch( &py.playerTurn );
+			ps = levelControler( grid, level, turn );
 			break;
 		default:
-			py.winnerPy = BLANK;
-			return py;
+			break;
 		}
-	} 
-	return py;
+	
+		gameModeControler( grid, ps, rInfo, &turn );
+	}
 }
 /*Control all the PVE levels by calling it according to the requested 
 Level*/
@@ -182,29 +174,13 @@ Cell isCellEmpty( const board *grid, int r, int c )
 {
 	return grid->boardGrid[r][c];
 }
+
+
 /*Populate the board with Humans Input Moves, and returns the move 
 result. Which can be drawn, x, o, not a win or error*/
-GameResult humanTurn( board *grid, int *turn, Cell symbol )
+State humanTurn( board *grid, position ps ,int *turn, Cell symbol )
 {
-	GameResult winner = RESULT_NOT_WIN;
-	position ps;
-	State moveResult = MOVE_OCCUPIED;
-	/*It runs the loop until doMove return a valid move (MOVE_OK)*/
-	while( moveResult != MOVE_OK  )
-	{
-		
-		ps = gameInput();
-		moveResult = doMove( grid, ps, turn, symbol );
-		
-		if( moveResult == MOVE_OK )
-		{
-			winner = result( grid, *turn );
-			break;
-		}
-		displayMoveMsg( moveResult );
-		
-	}
-	return winner;
+  return doMove( grid, ps, turn, symbol );
 }
 
 /*It returns the X or O based if the turn is even or odd*/
@@ -216,6 +192,7 @@ Cell whoTurn( int turn )
 	}
 	return CELL_O;
 }
+/*Player1 Decides if wants to play with X or O(*/
 void decideSymbol( roundInfo *p )
 {
 	char pT;
@@ -246,10 +223,15 @@ void decideSymbol( roundInfo *p )
 	}
 }
 
-void playerSwitch( Player *player )
+void playerSwitch( Player *playerTurn )
 {
-	*player = ( *player == PLAYER1 ) ? PLAYER2 : 
+	*playerTurn = ( *playerTurn == PLAYER1 ) ? PLAYER2 : 
 	PLAYER1;
+}
+
+Cell symbolSwitch( roundInfo r )
+{
+	return ( r.playerTurn == PLAYER1 ) ? r.player1 : r.player2;
 }
 
 /*Initialize all the array grid to ENUM Cell_Empyty*/
@@ -270,6 +252,7 @@ roundInfo roundInit( void )
 	roundInfo r;
 	r.player1 = CELL_EMPTY;
 	r.player2 = CELL_EMPTY;
+	r.turnCell = CELL_O;
 	r.playerTurn = BLANK;
 	r.winnerPy = BLANK;
 	r.winnerCell = RESULT_NOT_WIN;

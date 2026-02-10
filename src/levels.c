@@ -30,7 +30,7 @@ position level1( const board *grid )
 	It results in a LEVEL_ERROR*/
 	if( count == 0 )
 	{
-		ps.error = LEVEL_ERROR;
+		ps.error = LV1_NO_CELL;
 		ps.row = -1;
 		ps.collum = -1;
 		return ps;

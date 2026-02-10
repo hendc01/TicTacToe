@@ -68,8 +68,10 @@ typedef enum
 }AdmTypes;
 
 typedef enum{
-	LEVEL_ERROR = 0,	
+	LV1_NO_CELL= 0,	
 	LEVEL_OK = 1,
+	LEVEL_ERROR = 2,
+	
 }LevelError;
 
 typedef enum
@@ -141,6 +143,7 @@ typedef struct
 {
 	Cell player1;
 	Cell player2;
+	Cell turnCell;
 	Player playerTurn;
 	Player winnerPy;
 	Player losserPy;

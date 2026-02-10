@@ -6,17 +6,18 @@ roundInfo game ( board *grid, GameTypes gameChoices );
 void initializer ( board *grid );
 Cell isCellEmpty( const board *grid, int r, int c );
 void menu1 ( void );
-roundInfo gamePVPControler( board *grid	);
+void gamePVPControler( board *grid, roundInfo *rInfo	);
 State gridAlloc( board *grid, int row, int collum, Cell currentPlayer );
 Cell whoTurn( int turn );
 position gameInput();
 GameResult result( const board *grid, int turn );
-roundInfo gamePvEControler( board *grid, GameTypes level );
-GameResult humanTurn( board *grid, int *turn, Cell symbol );
+void gamePvEControler( board *grid, GameTypes level, 
+						   roundInfo *rInfo );
 State doMove(board *grid, position ps, int *turn, Cell symbol);
 position levelControler( board *grid ,GameTypes level,
 						int turn );
 roundInfo roundInit( void );
 void decideSymbol( roundInfo *py );
-void playerSwitch( Player *player );
+void playerSwitch( Player *playerTurn );
+Cell symbolSwitch( roundInfo r );
 #endif

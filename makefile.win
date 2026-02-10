@@ -57,7 +57,7 @@ src/auth.o: src/auth.c include/auth.h include/sqlite3.h include/gameTypes.h incl
 	$(CC) -c "src/auth.c" -o "src/auth.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 src/levels.o: src/levels.c include/gameTypes.h include/levels.h include/win.h include/game.h
-	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
 
 src/inputSafe.o: src/inputSafe.c include/gameTypes.h include/inputSafe.h include/game.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
