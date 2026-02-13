@@ -64,6 +64,24 @@ void displayMoveMsg( State moveResult )
 	}
 }
 
+void displayLevelMsg( LevelError msg )
+{
+	switch ( msg ) {
+	case LV1_NO_CELL:
+		printf("No empty cell available (level1 error)\n");
+		break;
+	case LEVEL_ERROR:
+		printf("Level error!\n");
+		break;
+	case ISTHERE_WIN_ERROR:
+		printf("isThereWin error.!\n");
+		break;	
+	default:
+		//TODO
+		break;
+	}
+}
+
 /*Prints the whole board for all board interations*/
 void printBoard( const board *grid )
 {

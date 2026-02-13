@@ -71,6 +71,7 @@ typedef enum{
 	LV1_NO_CELL= 0,	
 	LEVEL_OK = 1,
 	LEVEL_ERROR = 2,
+	ISTHERE_WIN_ERROR = 3,
 	
 }LevelError;
 

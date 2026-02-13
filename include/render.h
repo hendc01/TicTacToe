@@ -7,4 +7,5 @@ void printBoard( const board *grid );
 void authOtpMsg( LoginSystem result );
 void converterResult( GameResult result );
 void displayMoveMsg( State moveResult );
+void displayLevelMsg( LevelError msg );
 #endif

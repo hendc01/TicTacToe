@@ -3,19 +3,21 @@
 #include "game.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "render.h"
 #include "win.h"
-
+/*Controls the PVE level mode*/
 position levelControler( board *grid ,GameTypes level,
-						int turn )
+						roundInfo round )
 {
 	position ps;
 	switch ( level ) 
 	{
 	case LEVEL1:
 		ps = level1( grid );
+		if(ps.error == LV1_NO_CELL) displayLevelMsg(ps.error);
 		break;
 	case LEVEL2:
-		ps = level2( grid, whoTurn( turn ) );
+		ps = level2( grid, round.turnCell );
 		break;
 	default:
 		ps.row = -1;
@@ -62,7 +64,6 @@ position level1( const board *grid )
 	cell = randomIndex( count );
 	ps = empty[cell];
 	ps.error = LEVEL_OK;
-	
 	return ps;
 }
 /*It returns a random position if there is no possible win available 
@@ -112,7 +113,7 @@ int isThereWin( const board *grid, position *ps, Cell currentPlayer )
 	}
 	ps->row = -1;
 	ps->collum = -1;
-	ps->error = LEVEL_ERROR;
+	ps->error = ISTHERE_WIN_ERROR;
 	return 0;
 }
 /*Return a random number within a range*/

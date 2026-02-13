@@ -6,5 +6,5 @@ int randomIndex( int max );
 int isThereWin( const board *grid, position *ps, Cell currentPlayer );
 position level2( const board *grid, Cell currentPlayer );
 position levelControler( board *grid ,GameTypes level,
-						int turn );
+						roundInfo round );
 #endif

@@ -36,12 +36,8 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 	}
 }
 /*
-  Player vs Player controler
-  -First turn is decided by decideSymbol(player1 choice), after it 
-  by playerSwitch 
-  -humanTurn populate the board with user input and check for a win with
-   result() function, scanning all the board for a win return ENUM
-  (GameResult)
+  Controls the round flow for PVP or PVE, and stores the Winner in 
+  roundInfo struct 
 */
 roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
 							int *turn)
@@ -49,13 +45,14 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 	State roundState;
 
     roundState = doMove( grid, ps ,turn, 
-						symbolSwitch(*py) );
+						currentPlayerCell(*py) );
 	if( roundState != MOVE_OK )
 	{
 		displayMoveMsg(roundState);
 		return *py;
 	}
 	py->winnerCell = result( grid, *turn );
+	
 	if( py->winnerCell == RESULT_NOT_WIN )
 	{
 		playerSwitch( &py->playerTurn );
@@ -63,10 +60,14 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 	else if( py->winnerCell != RESULT_DRAW)
 	{
 		py->winnerPy = py->playerTurn;
+		/*result()test the win for the current player,
+		  so if the playerTurn win, that means the oposite of it
+		  is the losser.*/
 		py->losserPy = (py->playerTurn == PLAYER1)? PLAYER2 : PLAYER1;
 	}
 	return *py;
 }
+/*Runs PVP inputs until there's a winner or drawn*/
 void gamePVPControler( board *grid, roundInfo *rInfo )
 {
 	*rInfo = roundInit( );
@@ -80,7 +81,7 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 	}
 }
 
-/*Controls the functions responsible for the Player vs Machine*/
+/*Run the functions for PVE mode until there is a winner or drawn*/
 void gamePvEControler( board *grid, GameTypes level, 
 						   roundInfo *rInfo )
 {
@@ -92,7 +93,7 @@ void gamePvEControler( board *grid, GameTypes level,
 	
 	printBoard( grid );
 	
-	/*it runs until a winner is found or a Unknow error appear*/
+	/*Loop can also stop with RESULT_ERROR, appart from RESULT_WIN*/
 	while( rInfo->winnerCell == RESULT_NOT_WIN )
 	{
 		switch ( rInfo->playerTurn ) 
@@ -101,17 +102,19 @@ void gamePvEControler( board *grid, GameTypes level,
 			ps = gameInput();
 			break;
 		case PLAYER2:
-			ps = levelControler( grid, level, turn );
+			/*Player2 always AI or Player Who hasnt log in their account
+			(Guest), LevelControler calls the difficult availables in 
+			PVE*/
+			ps = levelControler( grid, level, *rInfo );
 			break;
 		default:
 			break;
 		}
-	
+		/*Moves the board according to the info gotten above in PLAYER1
+		  Or PLAYER 2*/
 		gameModeControler( grid, ps, rInfo, &turn );
 	}
 }
-/*Control all the PVE levels by calling it according to the requested 
-Level*/
 
 /*This move the board to next player by calling GridAlloc and iterating
 turn to pass the turn to the next player (x or o)*/
@@ -131,7 +134,6 @@ State doMove( board *grid, position ps, int *turn, Cell symbol)
 	(*turn)++;
 	return MOVE_OK;
 }
-
 
 /*Assign to board cell array X or O, if within the range*/
 State gridAlloc( board *grid, int row, int column, Cell currentPlayer )
@@ -157,15 +159,6 @@ Cell isCellEmpty( const board *grid, int r, int c )
 	return grid->boardGrid[r][c];
 }
 
-/*It returns the X or O based if the turn is even or odd*/
-Cell whoTurn( int turn )
-{
-	if( turn % 2 == 0 )
-	{
-		return CELL_X;
-	}
-	return CELL_O;
-}
 /*Player1 Decides if wants to play with X or O(*/
 void decideSymbol( roundInfo *p )
 {
@@ -196,14 +189,14 @@ void decideSymbol( roundInfo *p )
 		
 	}
 }
-
+/*Switch the current player*/
 void playerSwitch( Player *playerTurn )
 {
 	*playerTurn = ( *playerTurn == PLAYER1 ) ? PLAYER2 : 
 	PLAYER1;
 }
-
-Cell symbolSwitch( roundInfo r )
+/*Returns the cell (X or O) of the current player*/
+Cell currentPlayerCell( roundInfo r )
 {
 	return ( r.playerTurn == PLAYER1 ) ? r.player1 : r.player2;
 }
