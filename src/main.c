@@ -12,34 +12,22 @@
 
 int main( void )
 {
+	sqlite3 *db = NULL;
 	srand( time( NULL ) );
+	/*Refresh every game round. PLAYER1 always played who logged in*/
 	roundInfo py;
 	board grid;
 	userInfo user;
+	/*First index stores PLAYER1 second PLAYER2*/
 	ScoreInfo roundScore[2];
-
-	LoginSystem  authResult = LOGIN_FAILED;
-	sqlite3 *db = NULL;
+	
 	if(authInitDB( &db ) != 0 )
 	{
-		printf("DataBase Failed\n");
+		printf(" DataBase Failed\n ");
 	}
 	
-	while( authResult != LOGIN_OK )
-	{
-		/*-1 DEFAULT ARGUMENT. IT DOESNT HAVE A DIRECT EFFECT*/
-		authResult = authRun( &user, -1, db );
-		authOtpMsg( authResult );
-		
-		/*NAME_EXIST ONLY HAPPENS DURING REGISTER*/
-		if( authResult == NAME_EXIST )
-		{
-			authResult = authRun( &user, REGISTER, db );
-			roundScore[PLAYER1].id = user.id; 
-			authOtpMsg( authResult );
-		}	
-	
-	}
+	/*Login Block*/
+	authRun( &user, db, roundScore);
 	while(1)
 	{	/*Return roundInfo*/
 		roundScore[PLAYER1].id = user.id; 
@@ -47,6 +35,7 @@ int main( void )
 		converterResult( py.winnerCell );
 		printf("%d", scoreControler( db, py, roundScore ));
 	}
+	
 	sqlite3_close( db );
 	return 0;
 }

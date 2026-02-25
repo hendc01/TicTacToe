@@ -10,10 +10,10 @@ State gridAlloc( board *grid, int row, int collum, Cell currentPlayer );
 
 position gameInput();
 GameResult result( const board *grid, int turn );
-void gamePvEControler( board *grid, GameTypes level, 
+void gamePvEControler( board *grid, GameTypes gameMode, 
 						   roundInfo *rInfo );
 State doMove(board *grid, position ps, int *turn, Cell symbol);
-void decideSymbol( roundInfo *py );
+
 void playerSwitch( Player *playerTurn );
 Cell currentPlayerCell( roundInfo r );
 #endif

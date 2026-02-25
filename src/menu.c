@@ -66,12 +66,26 @@ GameTypes mainMenu( void )
 /*Administrator main Menu*/
 AdmTypes admMenu( void )
 {
-	printf("TIC-TAC-TOE\n");
+	printf( "TIC-TAC-TOE\n" );
 	printf( "(1) PLAYER VS PLAYER\n" );
 	printf( "(2) PLAYER VS MACHINE\n" );
 	printf( "(3) SUPERVISOR MODE\n \n" );
-	return (AdmTypes)intInput( 1, 3);
+	return ( AdmTypes )intInput( 1, 3 );
 }
+
+PvPModes pvpSubMenu(){
+	printf( "TIC-TAC-TOE\n" );
+	printf( "(1) Local Multiplayer\n" );
+	printf( "(2) LAN Mode\n" );
+	return (PvPModes)intInput( 1, 2 );
+}
+PvPModes pvpSubMenu2(){
+	printf( "TIC-TAC-TOE\n" );
+	printf( "(1) Host Game\n" );
+	printf( "(2) Enter Game\n" );
+	return (PvPModes)intInput( 1, 2 ) + 2;
+}
+
 /*Administrator sub-menu*/
 AdmTypes admMode( void )
 {

@@ -50,8 +50,11 @@ position level1( const board *grid )
 			}
 		}
 	}	
-	/*If this functions is called after a win or draw(0 cell empties). 
-	It results in a LEVEL_ERROR*/
+	/*If this function is called after a win or draw(0 cell empties). 
+	  It will tringger the msg error MOVE OUT OF RANGE, so always nece
+	  ssary to call RESULT() after every movent on the board. If is not
+	  know if the first movent is also True, call result before and 
+	  after*/
 	if( count == 0 )
 	{
 		ps.error = LV1_NO_CELL;

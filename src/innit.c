@@ -1,6 +1,8 @@
 #include "innit.h"
 #include "gameTypes.h"
 
+/*Set default values in case some of the struct items are not triggered
+  to point to a value, so i dont have unknow behaviour.*/
 roundInfo roundInit( void )
 {
 	roundInfo r;

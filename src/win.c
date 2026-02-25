@@ -19,7 +19,6 @@ GameResult result( const board *grid, int turn )
 			break;
 		}
 		return RESULT_NOT_WIN;
-		break;
 	}
 	return RESULT_ERROR;
 }

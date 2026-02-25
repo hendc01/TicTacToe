@@ -6,24 +6,51 @@
 #include "menu.h"
 #include <stdio.h>
 #include <string.h>
+#include <render.h>
 
+
+void authRun( userInfo *user, sqlite3 *db, ScoreInfo 
+					roundScore[]  )
+{
+	LoginSystem  authResult = LOGIN_FAILED; 
+	while( authResult != LOGIN_OK )
+	{
+		/*-1 DEFAULT ARGUMENT. IT DOESNT HAVE A DIRECT EFFECT*/
+		authResult = authController( user, LOGIN_MENU, db );
+		authOtpMsg( authResult );
+		
+		/*NAME_EXIST ONLY HAPPENS DURING REGISTER*/
+		if( authResult == NAME_EXIST )
+		{
+			/*user will stores the player1 identifier for DB 
+			select/insert*/
+			authResult = authController( user, REGISTER, db );
+			/*The program uses roundScore to locate/creater user in the 
+			DB for score table.*/
+			roundScore[PLAYER1].id = user->id; 
+			authOtpMsg( authResult );
+		}
+	}
+}
 /*Login system controler*/
-LoginSystem authRun( userInfo *user, int loginOpt, sqlite3 *db )
+LoginSystem authController( userInfo *user, int loginOpt, 
+						   sqlite3 *db )
 {
 	LoginSystem result;
-	if( loginOpt == -1 )
+	/*Main Login Menu*/
+	if( loginOpt == LOGIN_MENU )
 	{
 		loginOpt = loginMenu( );
 	}
-
+	
 	loginInput( user );
+	/*Sub Menus from main login menu*/
 	switch ( loginOpt )
 	{
 	case LOGIN:
 		
 		result = authLogin( db, user );
 		return result;
-		
 	case REGISTER:
 		
 		if( admCount( db )  < 1 )
@@ -33,7 +60,6 @@ LoginSystem authRun( userInfo *user, int loginOpt, sqlite3 *db )
 		else{
 			user->userRole = 1;
 		}
-		
 	    result = authRegister( db, user->userRole, user->userName, 
 							  user->userPass );
 		return result;
@@ -43,19 +69,7 @@ LoginSystem authRun( userInfo *user, int loginOpt, sqlite3 *db )
 		return result;
 	}	
 }
-/*Auth System output message*/
-LoginSystem authOtp( LoginSystem result )
-{
-	if( result == LOGIN_OK || result == REGISTER_OK )
-	{
-		return LOGIN_OK;
-	}
-	else if( result == NAME_EXIST )
-	{
-		return NAME_EXIST;
-	}
-	return LOGIN_FAILED;
-}
+
 /*Counts how many ADM there is in the DB users ( adm == 0)*/
 int admCount( sqlite3 *db )
 {

@@ -6,4 +6,5 @@ int intInput ( int min, int max );
 void cleanBuffer ( void );
 void userInput( char *userInfo, int size );
 SafeString stringInput( char *buff, int size  );
+void decideSymbol( roundInfo *py );
 #endif

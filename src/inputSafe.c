@@ -85,6 +85,40 @@ int loginInput( userInfo *user  )
 	return 1;
 }
 
+
+
+/*Player1 Decides if wants to play with X or O(*/
+void decideSymbol( roundInfo *p )
+{
+	char pT;
+	while(1)
+	{
+		printf( "Do you wanna play with X or O? Type(X or O): " );
+		scanf(" %c", &pT);
+		if( pT == 'X' || pT == 'x'  )
+		{
+			p->playerTurn = PLAYER1;
+			p->player1 = CELL_X;
+			p->player2 = CELL_O;
+			break;
+		}
+		else if( pT == 'o' || pT == 'O' || pT == '0' )
+		{
+			p->playerTurn = PLAYER2;
+			p->player2 = CELL_X;
+			p->player1 = CELL_O;
+			break;
+		}
+		else
+		{
+			printf( " %c command not recognized. Please Type X or O \n"
+				   , pT );	
+		}
+		
+	}
+}
+
+
 void cleanBuffer ( void )
 {
 	int ch;
@@ -93,5 +127,3 @@ void cleanBuffer ( void )
 		;
 	}	
 }
-
-

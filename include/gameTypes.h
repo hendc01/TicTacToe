@@ -68,6 +68,14 @@ typedef enum
 }AdmTypes;
 
 typedef enum{
+	LAN = 1,
+	LOCAL = 2,
+	HOST_GAME = 3,
+	ENTER_GAME = 4,
+	
+}PvPModes;
+
+typedef enum{
 	LV1_NO_CELL= 0,	
 	LEVEL_OK = 1,
 	LEVEL_ERROR = 2,
@@ -77,6 +85,7 @@ typedef enum{
 
 typedef enum
 {
+	LOGIN_MENU = -1,
 	LOGIN = 1,
 	REGISTER = 2,
 }LoginOpt;
@@ -110,10 +119,16 @@ typedef enum
 	D2 = 3,
 }WinPt;
 
+typedef enum{
+	SERVER = 0,
+	CLIENT = 1,
+}server;
+
 typedef struct
 {
 	int row;
 	int collum;
+	Player currentPlayer;
 	LevelError error;
 	
 }position;
@@ -157,6 +172,11 @@ typedef struct
 	int win;
 	Cell simbol;
 }winInfo;
+
+typedef struct{
+	char ipAdress[16];
+	char portAdress[6];
+}serverAdress ;
 
 #endif
 

@@ -10,4 +10,6 @@ AdmTypes admMode( void );
 int runLogin( userInfo *user );
 GameTypes admMenuController( sqlite3 *db );
 GameTypes menuControler( userInfo user, sqlite3 *db );
+PvPModes pvpSubMenu();
+PvPModes pvpSubMenu2();
 #endif

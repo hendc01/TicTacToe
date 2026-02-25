@@ -10,15 +10,21 @@
 #include "innit.h"
 /*Main controler*/
 
-/*Run one session of the game*/
-roundInfo game ( board *grid, GameTypes gameChoice)
+/*-Run one session of the game 
+  - Calls the PVP and PVE functions controler.
+  - Calls PVE sub-menu, sub-menu returns gameMode (level 1, Leve2..3 
+    for the PVE controler.
+  -PVP and PVE will rely on gameModeControle to move the board and 
+   switch current player.
+*/
+roundInfo game ( board *grid, GameTypes gameMode)
 {
 	/*Returns Game Option*/	
 	roundInfo py;
 	py = roundInit( );
 	gridInnit( grid );
 	
-	switch ( gameChoice ) 
+	switch ( gameMode ) 
 	{
 	case PLAYER_VS_PLAYER:
 		printBoard( grid );
@@ -26,10 +32,12 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 		return py;
 		
 	case PLAYER_VS_MACHINE:
-		gameChoice = pveMenu();
-		gamePvEControler( grid, gameChoice, &py);
+		gameMode = pveMenu();
+		gamePvEControler( grid, gameMode, &py);
 		return py;
-		
+	case MENU_ERROR:
+		printf( "Game Mode menu read error. \n" );
+		break;
 	default:
 		py.winnerCell = RESULT_ERROR;
 		return py;
@@ -38,6 +46,9 @@ roundInfo game ( board *grid, GameTypes gameChoice)
 /*
   Controls the round flow for PVP or PVE, and stores the Winner in 
   roundInfo struct 
+  -Call doMove to move the board with the current player symbol
+  -Switch the player
+  -Call resul to check for a wil
 */
 roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
 							int *turn)
@@ -60,8 +71,8 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 	else if( py->winnerCell != RESULT_DRAW)
 	{
 		py->winnerPy = py->playerTurn;
-		/*result()test the win for the current player,
-		  so if the playerTurn win, that means the oposite of it
+		/*result() test the win for the current player,
+		  so if the playerTurn(currentPlayer) wins, the player opposite
 		  is the losser.*/
 		py->losserPy = (py->playerTurn == PLAYER1)? PLAYER2 : PLAYER1;
 	}
@@ -82,7 +93,7 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 }
 
 /*Run the functions for PVE mode until there is a winner or drawn*/
-void gamePvEControler( board *grid, GameTypes level, 
+void gamePvEControler( board *grid, GameTypes gameMode, 
 						   roundInfo *rInfo )
 {
 	int turn = 0;
@@ -102,22 +113,24 @@ void gamePvEControler( board *grid, GameTypes level,
 			ps = gameInput();
 			break;
 		case PLAYER2:
-			/*Player2 always AI or Player Who hasnt log in their account
-			(Guest), LevelControler calls the difficult availables in 
-			PVE*/
-			ps = levelControler( grid, level, *rInfo );
+			/*Player2 always the AI or Player Who hasnt log in their 
+			account (Guest), LevelControler calls the difficult 
+			availables in PVE*/
+			ps = levelControler( grid, gameMode, *rInfo );
 			break;
 		default:
 			break;
 		}
-		/*Moves the board according to the info gotten above in PLAYER1
+		/*Moves the board according to the info gotten above, in PLAYER1
 		  Or PLAYER 2*/
 		gameModeControler( grid, ps, rInfo, &turn );
 	}
 }
 
 /*This move the board to next player by calling GridAlloc and iterating
-turn to pass the turn to the next player (x or o)*/
+  turn to pass the turn to the next player (x or o)
+  Also, increment *turn. Which will be used to decide drawn in result()
+  when == 9 */
 State doMove( board *grid, position ps, int *turn, Cell symbol)
 {
 	State result = gridAlloc( grid, ps.row, ps.collum, symbol );
@@ -159,36 +172,6 @@ Cell isCellEmpty( const board *grid, int r, int c )
 	return grid->boardGrid[r][c];
 }
 
-/*Player1 Decides if wants to play with X or O(*/
-void decideSymbol( roundInfo *p )
-{
-	char pT;
-	while(1)
-	{
-		printf( "Do you wanna play with X or O? Type(X or O): " );
-		scanf(" %c", &pT);
-		if( pT == 'X' || pT == 'x'  )
-		{
-			p->playerTurn = PLAYER1;
-			p->player1 = CELL_X;
-			p->player2 = CELL_O;
-			break;
-		}
-		else if( pT == 'o' || pT == 'O' || pT == '0' )
-		{
-			p->playerTurn = PLAYER2;
-			p->player2 = CELL_X;
-			p->player1 = CELL_O;
-			break;
-		}
-		else
-		{
-			printf( " %c command not recognized. Please Type X or O \n"
-				   , pT );	
-		}
-		
-	}
-}
 /*Switch the current player*/
 void playerSwitch( Player *playerTurn )
 {
