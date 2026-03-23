@@ -9,6 +9,11 @@
 #include "gameTypes.h"
 #include "innit.h"
 
+/*LanPvPControler works as a game controller for both The HOST and 
+ Client.
+ **This function holds GRID, ROUNDINFO and SOCKETS variables.
+
+*/
 int lanPvPControler( ){
 	SOCKET connectionSocket;
 	SOCKET clientSocket;
@@ -17,13 +22,21 @@ int lanPvPControler( ){
 	PvPModes opt = pvpSubMenu2();
 	switch( opt ){
 	case HOST_GAME:
-		serverSocketRun( &connectionSocket );
-		hostController( &rf, &connectionSocket, &grid, PLAYER1 );
+		if(serverSocketMaker( &connectionSocket ) == 1 ){
+			closesocket( connectionSocket );
+			WSACleanup();
+		}
+		if(runLanGame( &rf, &connectionSocket, &grid, PLAYER1 )== 1){
+			closesocket( connectionSocket );
+			WSACleanup();
+		}
 		break;
 	case ENTER_GAME:
-		if((clientControler( &grid, &rf, &clientSocket ) == 1)){
+		if((clientSocketMaker( &clientSocket ) == 1)){
+			closesocket( clientSocket );
+			WSACleanup();
 			printf("Error connecting\n");}
-		hostController( &rf, &clientSocket, &grid, PLAYER2 );
+		if(runLanGame( &rf, &clientSocket, &grid, PLAYER2 ) == 1)
 		break;
 	default:
 		break;
@@ -31,7 +44,7 @@ int lanPvPControler( ){
 	return 0;
 }
 
-int hostController(roundInfo *rInfo, SOCKET *connectionSocket,
+int runLanGame(roundInfo *rInfo, SOCKET *connectionSocket,
 				   board *grid, Player player){
 	gridInnit(grid);
 	position lanPosition;
@@ -93,31 +106,8 @@ int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn ){
 	return 0;
 }
 
-int pvpMoveLan( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn 
-				 ){
-	position ps;
-	unsigned char row, column, player, isThereWin;
-	unsigned char msg[4] = { row, column, player, isThereWin };
-	if( (*turn) == 0 ) decideSymbol( rInfo ), *rInfo = roundInit( );
-	
-	if( rInfo->playerTurn == PLAYER1 ){
-		ps = gameInput();
-		msg[0] = ps.row;
-		msg[1] = ps.collum;
-		msg[2] = rInfo->playerTurn;
-		msg[3] = ps.isThereWin;
-		gameModeControler( grid, ps, rInfo, turn );
-		sendPosition( sckt, msg );
-		(*turn)++;
-	}
-	else{
-		getPosition( sckt ,&ps);
-		gameModeControler( grid, ps, rInfo, turn );
-		(*turn)++;
-	}
-	return 1;
-}
-int serverSocketRun( SOCKET *connectionSocket ){
+
+int serverSocketMaker( SOCKET *connectionSocket ){
 	/*Initializing WinSock*/
 	SOCKET serverSocket;
 	struct sockaddr_in service = createSocketInfo( SERVER );
@@ -135,15 +125,11 @@ int serverSocketRun( SOCKET *connectionSocket ){
 	if( AcceptConnect( serverSocket, connectionSocket  ) == 1){
 		return 1;
 	}
-	/*
-	closesocket( serverSocket );
-	closesocket( *connectionSocket );
-	WSACleanup();
-	*/
+
 	return 0;
 }
 
-int clientControler( board *grid, roundInfo *rf, SOCKET *clientSocket ){
+int clientSocketMaker( SOCKET *clientSocket ){
 	struct sockaddr_in serverAddr = createSocketInfo( CLIENT );
 	
 	if( wsaStartUp() == 1 ){ return 1; };

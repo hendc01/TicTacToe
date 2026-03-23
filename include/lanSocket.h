@@ -8,7 +8,7 @@
 int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn );
 int pvpRunServer();
 int lanPvPControler();
-int serverSocketRun( SOCKET *connectionSocket );
+int serverSocketMaker( SOCKET *connectionSocket );
 int createSocket(SOCKET *socketAdress);
 int binding( SOCKET sckt, struct sockaddr_in *scktInfo );
 int activListen( SOCKET sckt );
@@ -19,8 +19,8 @@ int wsaStartUp();
 int sendPosition( SOCKET connectionSocket, unsigned char msg[4] );
 int getPosition( SOCKET sckt,  position *lanPosition  );
 int recvInfo( SOCKET skct,  char *buf, int size );
-int clientControler( board *grid, roundInfo *rf, SOCKET *clientSocket );
+int clientSocketMaker( SOCKET *clientSocket );
 int pvpGameLoop( SOCKET sckt, roundInfo *rInfo, board *grid );
-int hostController( roundInfo *rInfo, SOCKET *connectionSocket, 
+int runLanGame( roundInfo *rInfo, SOCKET *connectionSocket, 
 				   board *grid, Player player);
 #endif
