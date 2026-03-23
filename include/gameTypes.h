@@ -129,6 +129,7 @@ typedef struct
 	int row;
 	int collum;
 	Player currentPlayer;
+	GameResult isThereWin;
 	LevelError error;
 	
 }position;

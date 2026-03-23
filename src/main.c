@@ -8,10 +8,11 @@
 #include "auth.h"
 #include "render.h"
 #include "score.h"
-
+#include "lanSocket.h"
 
 int main( void )
 {
+	/*lanPvPControler();*/
 	sqlite3 *db = NULL;
 	srand( time( NULL ) );
 	/*Refresh every game round. PLAYER1 always played who logged in*/
@@ -35,6 +36,7 @@ int main( void )
 		converterResult( py.winnerCell );
 		printf("%d", scoreControler( db, py, roundScore ));
 	}
+	
 	
 	sqlite3_close( db );
 	return 0;

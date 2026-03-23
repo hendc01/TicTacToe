@@ -16,4 +16,6 @@ State doMove(board *grid, position ps, int *turn, Cell symbol);
 
 void playerSwitch( Player *playerTurn );
 Cell currentPlayerCell( roundInfo r );
+roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
+							int *turn);
 #endif

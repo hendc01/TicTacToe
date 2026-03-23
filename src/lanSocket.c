@@ -7,25 +7,63 @@
 #include "game.h"
 #include "menu.h"
 #include "gameTypes.h"
+#include "innit.h"
 
 int lanPvPControler(){
 	PvPModes opt = pvpSubMenu2();
 	switch( opt ){
 	case HOST_GAME:
 		serverSocketRun();
+		pvpRunClient();
+		break;
 	case ENTER_GAME:
-		clientControler();
+		if((clientControler() == 1)){printf("Error connecting\n");}
+		pvpRunClient();
+		break;
 	default:
-		;
+		break;
+	}
+	return 0;
 }
 
-int pvpRunClient(){
+int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo ){
 	/*First i need to send and receive a msg, then i start doing the loop
 	logic*/
+	unsigned char msg[3];
+	
+	*rInfo = roundInit( );
+	int turn = 0;
+	position ps;
+	if( turn == 0 ) decideSymbol( rInfo );
+	ps = gameInput();
+	msg[0] = ps.row;
+	msg[1] = ps.collum;
+	msg[3] = rInfo->playerTurn;
+	gameModeControler( grid, ps, rInfo, &turn );
+	sendPosition( sckt, msg );
 }
 
-int pvpRunServer(){
-	;
+int pvpMoveLan( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn 
+				 ){
+	position ps;
+	unsigned char msg[3];
+	if( turn == 0 ) decideSymbol( rInfo ), *rInfo = roundInit( );
+	
+	if( rInfo->playerTurn == PLAYER1 ){
+		ps = gameInput();
+		msg[0] = ps.row;
+		msg[1] = ps.collum;
+		msg[3] = rInfo->playerTurn;
+		gameModeControler( grid, ps, rInfo, turn );
+		sendPosition( sckt, msg );
+		turn++;
+	}
+	else{
+		getPosition( sckt ,&ps);
+		gameModeControler( grid, ps, rInfo, turn );
+		turn++;
+	}
+	return 1;
 }
 int serverSocketRun(){
 	/*Initializing WinSock*/
@@ -67,6 +105,8 @@ int clientControler(){
 	if( connect( clientSocket, ( struct sockaddr * ) &serverAddr, 
 				sizeof( serverAddr ) ) == SOCKET_ERROR){ return 1; }
 	if( sendPosition( clientSocket, msg ) == SOCKET_ERROR){ return 1; }
+
+	return 0;
 }
 
 
@@ -82,9 +122,9 @@ int createSocket(SOCKET *socketAdress ){
 
 struct sockaddr_in createSocketInfo(  int ip ){
 	struct sockaddr_in service;
-	service.sin_family = AF_INET;
 	serverAdress adress;
 	char ipAdress[21] = "INADDR_ANY";
+	service.sin_family = AF_INET;
 	
 	if( ip == 1 ){
 		printf( "Digite the Ip adress and port of the server you want" 
@@ -174,9 +214,9 @@ int wsaStartUp(){
 	return 0;
 }
 
-int sendPosition( SOCKET connectionSocket, unsigned char msg[3] ){
+int sendPosition( SOCKET connectionSocket, unsigned char msg[4] ){
 	int result;
-	result = send( connectionSocket, (char*) msg, 3, 0 );
+	result = send( connectionSocket, (char*) msg, 4, 0 );
 	if( result == SOCKET_ERROR ){
 		printf( "send failed with error: %d\n", WSAGetLastError() );
 	}
@@ -186,8 +226,8 @@ int sendPosition( SOCKET connectionSocket, unsigned char msg[3] ){
 int recvInfo( SOCKET skct,  char *buf, int size ){
 	int total = 0;
 	
-	while( total <= size ){
-		int result = recv( skct, buf + total, size, 0 );
+	while( total < size ){
+		int result = recv( skct, buf + total, size - total, 0 );
 		if( result == 0 ){
 			printf( " 0 bytes\n" );
 		}
@@ -201,11 +241,12 @@ int recvInfo( SOCKET skct,  char *buf, int size ){
 }
 
 int getPosition( SOCKET sckt,  position *lanPosition  ){
-	unsigned char msg[3];
-	if(recvInfo( sckt, (char*)msg, *msg )== 1){return 1;};
+	unsigned char msg[4] = { 0 };
+	if(recvInfo(sckt, (char*)msg, 4) == 1){return 1;};
 	lanPosition->row = (int)msg[0];
 	lanPosition->collum = (int)msg[1];
 	lanPosition->currentPlayer = (Player)msg[2];
+	lanPosition->isThereWin = msg[3];
 	return 0;
 }
 

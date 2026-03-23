@@ -92,6 +92,24 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 	}
 }
 
+void gamePVPLan( board *grid, roundInfo *rInfo )
+{
+
+	unsigned char msg[3];
+	*rInfo = roundInit( );
+	int turn = 0;
+	position ps;
+	if( turn == 0 ) decideSymbol( rInfo );
+	ps = gameInput();
+	msg[0] = ps.row;
+	msg[1] = ps.collum;
+	msg[3] = rInfo->playerTurn;
+	gameModeControler( grid, ps, rInfo, &turn );
+	turn++;
+	
+}
+
+
 /*Run the functions for PVE mode until there is a winner or drawn*/
 void gamePvEControler( board *grid, GameTypes gameMode, 
 						   roundInfo *rInfo )
