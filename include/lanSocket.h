@@ -5,10 +5,10 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 #include "gameTypes.h"
-int pvpRunClient();
+int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn );
 int pvpRunServer();
 int lanPvPControler();
-int serverSocketRun();
+int serverSocketRun( SOCKET *connectionSocket );
 int createSocket(SOCKET *socketAdress);
 int binding( SOCKET sckt, struct sockaddr_in *scktInfo );
 int activListen( SOCKET sckt );
@@ -19,5 +19,8 @@ int wsaStartUp();
 int sendPosition( SOCKET connectionSocket, unsigned char msg[4] );
 int getPosition( SOCKET sckt,  position *lanPosition  );
 int recvInfo( SOCKET skct,  char *buf, int size );
-int clientControler();
+int clientControler( board *grid, roundInfo *rf, SOCKET *clientSocket );
+int pvpGameLoop( SOCKET sckt, roundInfo *rInfo, board *grid );
+int hostController( roundInfo *rInfo, SOCKET *connectionSocket, 
+				   board *grid, Player player);
 #endif

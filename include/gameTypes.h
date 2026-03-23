@@ -165,7 +165,6 @@ typedef struct
 	Player winnerPy;
 	Player losserPy;
 	GameResult winnerCell;
-	 
 }roundInfo;
 
 typedef struct

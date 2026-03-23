@@ -9,16 +9,21 @@
 #include "gameTypes.h"
 #include "innit.h"
 
-int lanPvPControler(){
+int lanPvPControler( ){
+	SOCKET connectionSocket;
+	SOCKET clientSocket;
+	board grid;
+	roundInfo rf;
 	PvPModes opt = pvpSubMenu2();
 	switch( opt ){
 	case HOST_GAME:
-		serverSocketRun();
-		pvpRunClient();
+		serverSocketRun( &connectionSocket );
+		hostController( &rf, &connectionSocket, &grid, PLAYER1 );
 		break;
 	case ENTER_GAME:
-		if((clientControler() == 1)){printf("Error connecting\n");}
-		pvpRunClient();
+		if((clientControler( &grid, &rf, &clientSocket ) == 1)){
+			printf("Error connecting\n");}
+		hostController( &rf, &clientSocket, &grid, PLAYER2 );
 		break;
 	default:
 		break;
@@ -26,51 +31,96 @@ int lanPvPControler(){
 	return 0;
 }
 
-int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo ){
-	/*First i need to send and receive a msg, then i start doing the loop
-	logic*/
-	unsigned char msg[3];
-	
-	*rInfo = roundInit( );
+int hostController(roundInfo *rInfo, SOCKET *connectionSocket,
+				   board *grid, Player player){
+	gridInnit(grid);
+	position lanPosition;
 	int turn = 0;
+	printf("Entered hostController as player %d\n", player);
+	
+	*rInfo = roundInit();
+	printf("Aftter round innit");
+	rInfo->playerTurn = PLAYER1;
+	rInfo->player1 = CELL_X;
+	rInfo->player2 = CELL_O;
+	
+	while(1){
+		if(rInfo->playerTurn == player){
+			printf("About to send move\n");
+			if(pvpRunClient(*connectionSocket, grid, rInfo, &turn) == 1){
+				printf("pvpRunClient failed\n");
+				return 1;
+			}
+		}
+		else{
+			printf("About to receive move\n");
+			if(getPosition(*connectionSocket, &lanPosition) == 1){
+				printf("getPosition failed\n");
+				return 1;
+			}
+			printf("Received move\n");
+			gameModeControler(grid, lanPosition, rInfo, &turn);
+		}
+		
+		if(rInfo->winnerCell != RESULT_NOT_WIN){
+			printf("Player %d has won\n", rInfo->winnerPy);
+			break;
+		}
+	}
+	return 0;
+}
+
+
+
+int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn ){
+	unsigned char msg[4];
 	position ps;
-	if( turn == 0 ) decideSymbol( rInfo );
+	Player playedBy = rInfo->playerTurn;
+	
 	ps = gameInput();
+	printf("Before gameModeControler\n");
+	gameModeControler( grid, ps, rInfo, turn );
+	printf("After gameModeControler\n");
+	
 	msg[0] = ps.row;
 	msg[1] = ps.collum;
-	msg[3] = rInfo->playerTurn;
-	gameModeControler( grid, ps, rInfo, &turn );
-	sendPosition( sckt, msg );
+	msg[2] = playedBy;
+	msg[3] = rInfo->winnerCell;
+	
+	if(sendPosition( sckt, msg ) == SOCKET_ERROR){
+		return 1;
+	}
+	return 0;
 }
 
 int pvpMoveLan( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn 
 				 ){
 	position ps;
-	unsigned char msg[3];
-	if( turn == 0 ) decideSymbol( rInfo ), *rInfo = roundInit( );
+	unsigned char row, column, player, isThereWin;
+	unsigned char msg[4] = { row, column, player, isThereWin };
+	if( (*turn) == 0 ) decideSymbol( rInfo ), *rInfo = roundInit( );
 	
 	if( rInfo->playerTurn == PLAYER1 ){
 		ps = gameInput();
 		msg[0] = ps.row;
 		msg[1] = ps.collum;
-		msg[3] = rInfo->playerTurn;
+		msg[2] = rInfo->playerTurn;
+		msg[3] = ps.isThereWin;
 		gameModeControler( grid, ps, rInfo, turn );
 		sendPosition( sckt, msg );
-		turn++;
+		(*turn)++;
 	}
 	else{
 		getPosition( sckt ,&ps);
 		gameModeControler( grid, ps, rInfo, turn );
-		turn++;
+		(*turn)++;
 	}
 	return 1;
 }
-int serverSocketRun(){
+int serverSocketRun( SOCKET *connectionSocket ){
 	/*Initializing WinSock*/
 	SOCKET serverSocket;
-	SOCKET connectionSocket;
 	struct sockaddr_in service = createSocketInfo( SERVER );
-	
 	if( wsaStartUp() == 1 ){ return 1;}
 	
 	if( createSocket( &serverSocket )  == 1 ){
@@ -82,30 +132,26 @@ int serverSocketRun(){
 	if( activListen( serverSocket ) == 1 ){
 		return 1;
 	}
-	if( AcceptConnect( serverSocket, &connectionSocket  ) == 1){
+	if( AcceptConnect( serverSocket, connectionSocket  ) == 1){
 		return 1;
 	}
+	/*
 	closesocket( serverSocket );
-	closesocket( connectionSocket );
+	closesocket( *connectionSocket );
 	WSACleanup();
+	*/
 	return 0;
 }
 
-int clientControler(){
-	unsigned char row, column, player;
-	unsigned char msg[3] = { row, column, player };
-	
-	SOCKET clientSocket;
+int clientControler( board *grid, roundInfo *rf, SOCKET *clientSocket ){
 	struct sockaddr_in serverAddr = createSocketInfo( CLIENT );
 	
 	if( wsaStartUp() == 1 ){ return 1; };
 	
-	if( createSocket( &clientSocket )  == 1 ){ return 1; }
+	if( createSocket( clientSocket )  == 1 ){ return 1; }
 	
-	if( connect( clientSocket, ( struct sockaddr * ) &serverAddr, 
+	if( connect( *clientSocket, ( struct sockaddr * ) &serverAddr, 
 				sizeof( serverAddr ) ) == SOCKET_ERROR){ return 1; }
-	if( sendPosition( clientSocket, msg ) == SOCKET_ERROR){ return 1; }
-
 	return 0;
 }
 
@@ -197,6 +243,7 @@ serverAdress serveParssing( char serverAdr[21]){
 	while( portIndex < 4 && serverAdr[i] != '\0' ){
 		adress.portAdress[portIndex] = serverAdr[i];
 		i++;
+		portIndex++;
 	}
 	
 	adress.portAdress[portIndex] = '\0';
@@ -223,21 +270,26 @@ int sendPosition( SOCKET connectionSocket, unsigned char msg[4] ){
 	return result;
 }
 
-int recvInfo( SOCKET skct,  char *buf, int size ){
+int recvInfo(SOCKET skct, char *buf, int size) {
 	int total = 0;
 	
-	while( total < size ){
-		int result = recv( skct, buf + total, size - total, 0 );
-		if( result == 0 ){
-			printf( " 0 bytes\n" );
+	while (total < size) {
+		int result = recv(skct, buf + total, size - total, 0);
+		
+		if (result > 0) {
+			total += result;
 		}
-		else{
-			printf( "receive position error: %d\n", WSAGetLastError() );
+		else if (result == 0) {
+			printf("connection closed by peer\n");
 			return 1;
 		}
-		total += result;
+		else {
+			printf("receive failed with error: %d\n", WSAGetLastError());
+			return 1;
+		}
 	}
-	return 0;	
+	
+	return 0;
 }
 
 int getPosition( SOCKET sckt,  position *lanPosition  ){

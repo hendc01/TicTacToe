@@ -33,7 +33,7 @@ src/levels.o: src/levels.c include/levels.h include/game.h include/gameTypes.h i
 	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 src/main.o: src/main.c include/game.h include/score.h include/gameTypes.h include/auth.h include/menu.h include/render.h include/sqlite3.h include/lanSocket.h include/inputSafe.h
-	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS) 
 
 src/score.o: src/score.c include/score.h include/gameTypes.h include/sqlite3.h
 	$(CC) -c "src/score.c" -o "src/score.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
