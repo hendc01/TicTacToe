@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "win.h"
 #include "innit.h"
+#include "lanSocket.h"
 /*Main controler*/
 
 /*-Run one session of the game 
@@ -27,10 +28,16 @@ roundInfo game ( board *grid, GameTypes gameMode)
 	switch ( gameMode ) 
 	{
 	case PLAYER_VS_PLAYER:
+		PvPModes pvpMenu = pvpSubMenu();
+		if( pvpMenu == LAN){
+			lanPvPControler();
+			break;
+		}
+		// PVP LOCAL
 		printBoard( grid );
 		gamePVPControler( grid, &py );
 		return py;
-		
+	
 	case PLAYER_VS_MACHINE:
 		gameMode = pveMenu();
 		gamePvEControler( grid, gameMode, &py);
@@ -90,23 +97,6 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 		ps = gameInput();
 		gameModeControler( grid, ps, rInfo, &turn );
 	}
-}
-
-void gamePVPLan( board *grid, roundInfo *rInfo )
-{
-
-	unsigned char msg[3];
-	*rInfo = roundInit( );
-	int turn = 0;
-	position ps;
-	if( turn == 0 ) decideSymbol( rInfo );
-	ps = gameInput();
-	msg[0] = ps.row;
-	msg[1] = ps.collum;
-	msg[3] = rInfo->playerTurn;
-	gameModeControler( grid, ps, rInfo, &turn );
-	turn++;
-	
 }
 
 

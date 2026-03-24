@@ -76,7 +76,7 @@ AdmTypes admMenu( void )
 PvPModes pvpSubMenu(){
 	printf( "TIC-TAC-TOE\n" );
 	printf( "(1) Local Multiplayer\n" );
-	printf( "(2) LAN Mode\n" );
+	printf( "(2) Online\n" );
 	return (PvPModes)intInput( 1, 2 );
 }
 PvPModes pvpSubMenu2(){
