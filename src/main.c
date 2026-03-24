@@ -12,7 +12,7 @@
 
 int main( void )
 {
-	lanPvPControler();
+	//lanPvPControler();
 	sqlite3 *db = NULL;
 	srand( time( NULL ) );
 	/*Refresh every game round. PLAYER1 always played who logged in*/

@@ -68,7 +68,7 @@ src/supervisor.o: src/supervisor.c include/levels.h include/game.h include/score
 src/innit.o: src/innit.c include/levels.h include/game.h include/score.h include/gameTypes.h include/auth.h include/innit.h include/menu.h include/sql.h include/gameMode.h include/render.h include/win.h include/supervisor.h include/sqlite3.h include/lanSocket.h include/inputSafe.h
 	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/lanSocket.o: src/lanSocket.c include/levels.h include/game.h include/score.h include/gameTypes.h include/auth.h include/innit.h include/menu.h include/sql.h include/gameMode.h include/render.h include/win.h include/supervisor.h include/sqlite3.h include/lanSocket.h include/inputSafe.h
+src/lanSocket.o: src/lanSocket.c include/game.h include/gameTypes.h include/innit.h include/menu.h include/sqlite3.h include/lanSocket.h include/inputSafe.h
 	$(CC) -c "src/lanSocket.c" -o "src/lanSocket.o" $(CFLAGS) 
 
 TicTacToe_private.res: TicTacToe_private.rc 

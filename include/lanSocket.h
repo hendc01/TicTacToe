@@ -5,7 +5,7 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 #include "gameTypes.h"
-int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn );
+int pvpSentInfo( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn );
 int pvpRunServer();
 int lanPvPControler();
 int serverSocketMaker( SOCKET *connectionSocket );

@@ -44,37 +44,34 @@ int lanPvPControler( ){
 	return 0;
 }
 
+/*RunLanGame controls the sent and receive(functions) data for both ends
+  *Controls the loop until there is a winner.
+  *Player cells symbol hardcoded here(UPDATE TO decidCell necessary)
+*/
 int runLanGame(roundInfo *rInfo, SOCKET *connectionSocket,
 				   board *grid, Player player){
 	gridInnit(grid);
+	*rInfo = roundInit();
 	position lanPosition;
 	int turn = 0;
-	printf("Entered hostController as player %d\n", player);
 	
-	*rInfo = roundInit();
-	printf("Aftter round innit");
 	rInfo->playerTurn = PLAYER1;
 	rInfo->player1 = CELL_X;
 	rInfo->player2 = CELL_O;
 	
 	while(1){
 		if(rInfo->playerTurn == player){
-			printf("About to send move\n");
-			if(pvpRunClient(*connectionSocket, grid, rInfo, &turn) == 1){
-				printf("pvpRunClient failed\n");
+			if(pvpSentInfo(*connectionSocket, grid, rInfo, &turn) == 1){
 				return 1;
 			}
 		}
 		else{
-			printf("About to receive move\n");
 			if(getPosition(*connectionSocket, &lanPosition) == 1){
-				printf("getPosition failed\n");
 				return 1;
 			}
-			printf("Received move\n");
+			/*Refreshs the board after receiving new position*/
 			gameModeControler(grid, lanPosition, rInfo, &turn);
 		}
-		
 		if(rInfo->winnerCell != RESULT_NOT_WIN){
 			printf("Player %d has won\n", rInfo->winnerPy);
 			break;
@@ -83,17 +80,15 @@ int runLanGame(roundInfo *rInfo, SOCKET *connectionSocket,
 	return 0;
 }
 
-
-
-int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn ){
+/*Sent position and game state to the other computer in a 4 bits pacakge */
+int pvpSentInfo( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn ){
 	unsigned char msg[4];
 	position ps;
 	Player playedBy = rInfo->playerTurn;
 	
 	ps = gameInput();
-	printf("Before gameModeControler\n");
+	/*Refreshs the board*/
 	gameModeControler( grid, ps, rInfo, turn );
-	printf("After gameModeControler\n");
 	
 	msg[0] = ps.row;
 	msg[1] = ps.collum;
@@ -106,7 +101,7 @@ int pvpRunClient( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn ){
 	return 0;
 }
 
-
+/*Constrols the socket functions for the serve-side*/
 int serverSocketMaker( SOCKET *connectionSocket ){
 	/*Initializing WinSock*/
 	SOCKET serverSocket;
@@ -129,6 +124,8 @@ int serverSocketMaker( SOCKET *connectionSocket ){
 	return 0;
 }
 
+/*Constrols the sockets functions for the clientSide also perform the 
+  connect*/
 int clientSocketMaker( SOCKET *clientSocket ){
 	struct sockaddr_in serverAddr = createSocketInfo( CLIENT );
 	
@@ -141,7 +138,7 @@ int clientSocketMaker( SOCKET *clientSocket ){
 	return 0;
 }
 
-
+/*Create socket for both ends*/
 int createSocket(SOCKET *socketAdress ){
 	*socketAdress = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if(*socketAdress == INVALID_SOCKET){
@@ -152,6 +149,8 @@ int createSocket(SOCKET *socketAdress ){
 	return 0;
 }
 
+/*CreateSocketInfo populates information into the socket for both host
+  and Client according to the argument given to the parameter IP*/
 struct sockaddr_in createSocketInfo(  int ip ){
 	struct sockaddr_in service;
 	serverAdress adress;
@@ -173,6 +172,7 @@ struct sockaddr_in createSocketInfo(  int ip ){
 	return service;
 }
 
+/*Bind the serve socket*/
 int binding( SOCKET sckt, struct sockaddr_in *scktInfo ){
 	if( bind( sckt, (struct sockaddr*) scktInfo, sizeof(*scktInfo) ) == 
 	   SOCKET_ERROR){
@@ -183,6 +183,7 @@ int binding( SOCKET sckt, struct sockaddr_in *scktInfo ){
 	return 0;
 }
 
+/*Allows listen to wait for a connection*/
 int activListen( SOCKET sckt ){
 	if( listen( sckt, 1 ) == SOCKET_ERROR  ){
 		printf( "listen failed with error: %d\n", WSAGetLastError() );
@@ -192,6 +193,7 @@ int activListen( SOCKET sckt ){
 	return 0;
 }
 
+/*Accepts the connection*/
 int AcceptConnect( SOCKET sckt, SOCKET *clientSocket ){
 	printf("Waiting for client to connect...\n");
 	*clientSocket = accept( sckt, NULL, NULL );
@@ -207,11 +209,12 @@ int AcceptConnect( SOCKET sckt, SOCKET *clientSocket ){
 	return 0;
 }
 
+/*Connects to the servers (client side)*/
 int ConnectToServer( SOCKET clientSckt, struct sockaddr_in *address ){
 	return connect( clientSckt, ( struct sockaddr *) address, 
 				    sizeof(*address) );
 }
-	
+/*Parsing the IP address with the Port in the format(000.000.000:0000)*/
 serverAdress serveParssing( char serverAdr[21]){
 	serverAdress adress;
 	int i = 0;
@@ -236,6 +239,7 @@ serverAdress serveParssing( char serverAdr[21]){
 	return adress;
 }
 
+/*Socket StartUp*/
 int wsaStartUp(){
 	WSADATA wsaData;
 	int result = WSAStartup(MAKEWORD( 2, 2), &wsaData );
@@ -246,7 +250,7 @@ int wsaStartUp(){
 	}
 	return 0;
 }
-
+/*Send the 4bits packet to the other pc*/
 int sendPosition( SOCKET connectionSocket, unsigned char msg[4] ){
 	int result;
 	result = send( connectionSocket, (char*) msg, 4, 0 );
@@ -256,6 +260,8 @@ int sendPosition( SOCKET connectionSocket, unsigned char msg[4] ){
 	return result;
 }
 
+/*Receives the packet sent by the other computer
+ Function used by getPosition*/
 int recvInfo(SOCKET skct, char *buf, int size) {
 	int total = 0;
 	
@@ -278,6 +284,8 @@ int recvInfo(SOCKET skct, char *buf, int size) {
 	return 0;
 }
 
+/*Receives the 4 bits pack and asssigned that to position struct
+ (row,collum,currentPlayer,IsThereWin)*/
 int getPosition( SOCKET sckt,  position *lanPosition  ){
 	unsigned char msg[4] = { 0 };
 	if(recvInfo(sckt, (char*)msg, 4) == 1){return 1;};
