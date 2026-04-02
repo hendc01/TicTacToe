@@ -21,6 +21,7 @@ position levelControler( board *grid ,GameTypes level,
 		break;
 	case LEVEL4:
 		ps = level4( grid, round );
+		break;
 	default:
 		ps.row = -1;
 		ps.collum = -1;
@@ -100,7 +101,7 @@ position level4( const board *grid, roundInfo rf ){
 	for( int r = 0; r < 3; r++ ){
 		for( int c = 0; c < 3; c++ ){
 			
-			if( isCellEmpty( grid, r, c ) ){
+			if( isCellEmpty( grid, r, c ) == CELL_EMPTY ){
 				board tempGrid = *grid;
 				roundInfo tempInfo = rf;
 				gridAlloc( &tempGrid, r, c, rf.player2 );
@@ -178,8 +179,8 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 	int bestScore;
 	rf.player2 = aiSymbol;
 	//MAX PLAYER
-	if( rf.player2 == rf.turnCell ){ //needs to populate RoundInfo
-		bestScore = -2;	
+	if( currentPlayerCell(rf) == aiSymbol ){
+		bestScore = -2;
 	}
 	else{
 		bestScore = 2;
