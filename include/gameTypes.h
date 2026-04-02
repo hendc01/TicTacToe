@@ -124,6 +124,11 @@ typedef enum{
 	CLIENT = 1,
 }server;
 
+typedef enum{
+	MIN_PLAYER = 0,
+	MAX_PLAYER = 1,
+}Minimax;
+
 typedef struct
 {
 	int row;
@@ -165,6 +170,7 @@ typedef struct
 	Player winnerPy;
 	Player losserPy;
 	GameResult winnerCell;
+	int turn;
 }roundInfo;
 
 typedef struct

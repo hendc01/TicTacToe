@@ -88,6 +88,48 @@ position level2( const board *grid, Cell currentPlayer )
 	}
 	return level1( grid );
 }
+
+position level4( const board *grid, roundInfo rf ){
+	int valuation;
+	position bestPosition;
+	position secondBest;
+	int drawn = 0;
+	
+	for( int r = 0; r < 3; r++ ){
+		for( int c = 0; c < 3; c++ ){
+			
+			if( isCellEmpty( grid, r, c ) ){
+				board tempGrid = *grid;
+				roundInfo tempInfo = rf;
+				gridAlloc( &tempGrid, r, c, rf.player2 );
+				playerSwitch(&tempInfo.playerTurn);
+				valuation = minimax( tempGrid, 
+						    tempInfo.player2,
+						    tempInfo,rf.turn + 1 );
+				
+					
+				if( valuation == 1 ){
+					bestPosition.row = r;
+					bestPosition.collum = c;
+					return bestPosition;
+				}
+				if( !drawn && valuation == 0 ){
+					secondBest.row = r;
+					secondBest.collum = c;
+					drawn = 1;
+				}	
+			}
+			
+		}
+	}
+	if( drawn ){
+		return secondBest;	
+	}
+	else{
+		return level1( grid );
+	}
+	
+}
 /*Scan the board for a win for a specif player*/
 int isThereWin( const board *grid, position *ps, Cell currentPlayer )
 {
@@ -124,3 +166,68 @@ int randomIndex( int max )
 {
 	return rand() % max;
 }
+// !!!SYMBOL must me the AI symboy
+int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
+	roundInfo depthInfo;
+	Cell isEmpty;
+	GameResult gameState;
+	Cell aiSymbol = symbol;
+	int evaluation;
+	int bestScore;
+	rf.player2 = aiSymbol;
+	//MAX PLAYER
+	if( rf.player2 == rf.turnCell ){ //needs to populate RoundInfo
+		bestScore = -2;	
+	}
+	else{
+		bestScore = 2;
+	}
+	
+	gameState = result( &grid, turn );
+	if( gameState == RESULT_DRAW) {
+		return 0;
+	}
+	if( (gameState == RESULT_X_WINS && 
+	     aiSymbol == CELL_X)  ||
+	     (gameState == RESULT_O_WINS &&
+	      aiSymbol == CELL_O)){
+		return 1;
+	}
+	if( (gameState == RESULT_X_WINS && aiSymbol == CELL_O) ||
+	   (gameState == RESULT_O_WINS && aiSymbol == CELL_X) ){
+		return -1;
+	}
+	for( int r = 0 ; r < 3 ; r++ ){
+		for( int c = 0 ; c < 3 ; c++ ){
+			isEmpty = isCellEmpty( &grid, r, c );
+			if( isEmpty == CELL_EMPTY ){ 
+				symbol = currentPlayerCell( rf );
+				gridAlloc( &grid, r, c, symbol );
+				depthInfo = rf;
+				playerSwitch( &depthInfo.playerTurn );
+				evaluation = minimax( grid, aiSymbol, 
+					depthInfo, turn + 1 );
+				if( currentPlayerCell(rf) == 
+				   rf.player2 ){
+					if( evaluation > bestScore ){
+						bestScore = evaluation;
+					}	
+				}
+				else{
+					if( evaluation < bestScore ){
+						bestScore = evaluation;
+					}	
+				}
+				
+				grid.boardGrid[r][c] = CELL_EMPTY;
+			}
+		}
+	}
+	return bestScore;
+}
+void minimaxSwitch( Minimax *isMax )
+{
+	*isMax = ( *isMax == MIN_PLAYER ) ? MAX_PLAYER : 
+	MIN_PLAYER;
+}
+

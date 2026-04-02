@@ -63,7 +63,7 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 	State roundState;
 
     roundState = doMove( grid, ps ,turn, 
-						currentPlayerCell(*py) );
+				currentPlayerCell(*py) );
 	if( roundState != MOVE_OK )
 	{
 		displayMoveMsg(roundState);
@@ -104,7 +104,7 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 void gamePvEControler( board *grid, GameTypes gameMode, 
 						   roundInfo *rInfo )
 {
-	int turn = 0;
+	rInfo->turn = 0;
 	*rInfo = roundInit( );
 
 	decideSymbol( rInfo );
@@ -131,7 +131,7 @@ void gamePvEControler( board *grid, GameTypes gameMode,
 		}
 		/*Moves the board according to the info gotten above, in PLAYER1
 		  Or PLAYER 2*/
-		gameModeControler( grid, ps, rInfo, &turn );
+		gameModeControler( grid, ps, rInfo, &rInfo.turn );
 	}
 }
 
