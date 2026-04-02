@@ -54,6 +54,7 @@ typedef enum
 	PLAYER_VS_MACHINE = 2,
 	LEVEL1 = 3,
 	LEVEL2 = 4,
+	LEVEL4 = 6,
 	MENU_ERROR = 0,
 }GameTypes;
 

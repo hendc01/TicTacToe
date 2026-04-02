@@ -131,7 +131,7 @@ void gamePvEControler( board *grid, GameTypes gameMode,
 		}
 		/*Moves the board according to the info gotten above, in PLAYER1
 		  Or PLAYER 2*/
-		gameModeControler( grid, ps, rInfo, &rInfo.turn );
+		gameModeControler( grid, ps, rInfo, &rInfo->turn );
 	}
 }
 

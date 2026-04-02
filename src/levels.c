@@ -19,6 +19,8 @@ position levelControler( board *grid ,GameTypes level,
 	case LEVEL2:
 		ps = level2( grid, round.turnCell );
 		break;
+	case LEVEL4:
+		ps = level4( grid, round );
 	default:
 		ps.row = -1;
 		ps.collum = -1;

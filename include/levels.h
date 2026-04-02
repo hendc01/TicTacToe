@@ -8,4 +8,5 @@ position level2( const board *grid, Cell currentPlayer );
 position levelControler( board *grid ,GameTypes level,
 						roundInfo round );
 int minimax( board grid, Cell symbol, roundInfo rf, int turn );
+position level4( const board *grid, roundInfo rf );
 #endif
