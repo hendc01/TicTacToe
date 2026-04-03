@@ -7,7 +7,6 @@ GameResult result( const board *grid, int turn )
 {
 	Cell winner = CELL_EMPTY;
 	winner = winChecker( grid );
-	printf("turn%d:", turn);
 	switch ( winner )
 	{
 	case CELL_X:
@@ -15,18 +14,9 @@ GameResult result( const board *grid, int turn )
 	case CELL_O:
 		return RESULT_O_WINS;
 	case CELL_EMPTY:
-		printf("Cell empty triggered\n");
-		printf( "Is draw: %d", isDrawn( *grid ) );
 		if( isDrawn( *grid ) ){
-			printf( "Returned Draw" );
 			return RESULT_DRAW;
 			break;	
-		}
-		
-		if( turn == 9 )
-		{
-			return RESULT_DRAW;
-			break;
 		}
 		return RESULT_NOT_WIN;
 	}

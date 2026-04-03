@@ -100,11 +100,24 @@ GameTypes pveMenu( void )
 {
 	int choice = 0;
 	printf( "Player vs Machine\n" );
-	printf( "(1) LEVEL 1 \n" );
+	printf( "(1) LEVEL 1\n" );
 	printf( "(2) LEVEL 2\n" );
+	printf( "(2) LEVEL 3\n" );
 	printf( "(4) LEVEL 4\n" );
 	choice = intInput( 1, 4 );
-	return ( choice == 1 ) ? LEVEL1 : LEVEL2;
+	switch (choice)
+	{
+	case 1:
+		return LEVEL1;
+	case 2:
+		return LEVEL2;
+	case 3:
+		return LEVEL3;
+	case 4:
+		return LEVEL4;
+	default:
+		return MENU_ERROR;
+	}
 }
 /*Login*/	
 LoginOpt loginMenu( void )

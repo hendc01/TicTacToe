@@ -104,7 +104,6 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 void gamePvEControler( board *grid, GameTypes gameMode, 
 						   roundInfo *rInfo )
 {
-	rInfo->turn = 0;
 	*rInfo = roundInit( );
 
 	decideSymbol( rInfo );

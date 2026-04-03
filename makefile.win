@@ -48,7 +48,7 @@ src/levels.o: src/levels.c include/gameTypes.h include/win.h include/game.h incl
 	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
 
 src/innit.o: src/innit.c include/gameTypes.h include/innit.h
-	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS) 
 
 src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252

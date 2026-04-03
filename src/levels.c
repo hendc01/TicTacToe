@@ -10,6 +10,7 @@ position levelControler( board *grid ,GameTypes level,
 						roundInfo round )
 {
 	position ps;
+	printf("LEVEL CALLED: %d\n", level);
 	switch ( level ) 
 	{
 	case LEVEL1:
@@ -19,8 +20,11 @@ position levelControler( board *grid ,GameTypes level,
 	case LEVEL2:
 		ps = level2( grid, round.turnCell );
 		break;
+	case LEVEL3:
+		ps = level4( grid, round, 3);
+		break;
 	case LEVEL4:
-		ps = level4( grid, round );
+		ps = level4( grid, round, 9 );
 		break;
 	default:
 		ps.row = -1;
@@ -92,7 +96,7 @@ position level2( const board *grid, Cell currentPlayer )
 	return level1( grid );
 }
 
-position level4( const board *grid, roundInfo rf ){
+position level4( const board *grid, roundInfo rf, int depth ){
 	int valuation;
 	position bestPosition;
 	position secondBest;
@@ -106,12 +110,11 @@ position level4( const board *grid, roundInfo rf ){
 				foundMove = 1;
 				board tempGrid = *grid;
 				roundInfo tempInfo = rf;
-				gridAlloc( &tempGrid, r, c, rf.player2 );
-				playerSwitch(&tempInfo.playerTurn);
-				valuation = minimax( tempGrid, 
-						    tempInfo.player2,
-						    tempInfo,rf.turn + 1 );
-				
+				Cell aiSymbol = currentPlayerCell(rf);
+				gridAlloc( &tempGrid, r, c, aiSymbol );
+				playerSwitch( &tempInfo.playerTurn );
+				valuation = minimax( tempGrid, aiSymbol,
+					tempInfo, rf.turn + 1, depth );
 					
 				if( valuation == 1 ){
 					bestPosition.row = r;
@@ -123,8 +126,7 @@ position level4( const board *grid, roundInfo rf ){
 					secondBest.collum = c;
 					drawn = 1;
 				}	
-			}
-			
+			}	
 		}
 	}
 	if( drawn ){
@@ -139,8 +141,6 @@ position level4( const board *grid, roundInfo rf ){
 		bestPosition.error = LV1_NO_CELL;
 		return bestPosition;	
 	}
-	
-
 	
 }
 /*Scan the board for a win for a specif player*/
@@ -180,20 +180,24 @@ int randomIndex( int max )
 	return rand() % max;
 }
 // !!!SYMBOL must me the AI symboy
-int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
+int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	roundInfo depthInfo;
 	Cell isEmpty;
 	GameResult gameState;
 	Cell aiSymbol = symbol;
 	int evaluation;
 	int bestScore;
-	rf.player2 = aiSymbol;
+	int foundMove = 0;
 	//MAX PLAYER
 	if( currentPlayerCell( rf ) == aiSymbol ){
 		bestScore = -2;
 	}
 	else{
 		bestScore = 2;
+	}
+	
+	if (depth == 0) {
+		return 10; // later we improve this
 	}
 	
 	gameState = result( &grid, turn );
@@ -212,12 +216,15 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 		for( int c = 0 ; c < 3 ; c++ ){
 			isEmpty = isCellEmpty( &grid, r, c );
 			if( isEmpty == CELL_EMPTY ){ 
+				
+				foundMove = 1;
+				board tempGrid = grid;
 				symbol = currentPlayerCell( rf );
-				gridAlloc( &grid, r, c, symbol );
+				gridAlloc( &tempGrid, r, c, symbol );
 				depthInfo = rf;
 				playerSwitch( &depthInfo.playerTurn );
-				evaluation = minimax( grid, aiSymbol, 
-					depthInfo, turn + 1 );
+				evaluation = minimax( tempGrid, aiSymbol, 
+					depthInfo, turn + 1, depth -1 );
 				if( currentPlayerCell(rf) == 
 				   aiSymbol ){
 					if( evaluation > bestScore ){
@@ -230,9 +237,12 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 					}	
 				}
 				
-				grid.boardGrid[r][c] = CELL_EMPTY;
+			
 			}
 		}
+	}
+	if( !foundMove ){
+		return 0;
 	}
 	return bestScore;
 }

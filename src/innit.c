@@ -13,6 +13,7 @@ roundInfo roundInit( void )
 	r.winnerPy = BLANK;
 	r.winnerCell = RESULT_NOT_WIN;
 	r.losserPy = BLANK;
+	r.turn = 0;
 	return r;
 	
 }
