@@ -115,6 +115,10 @@ void gamePvEControler( board *grid, GameTypes gameMode,
 	/*Loop can also stop with RESULT_ERROR, appart from RESULT_WIN*/
 	while( rInfo->winnerCell == RESULT_NOT_WIN )
 	{
+		rInfo->winnerCell = result(grid, rInfo->turn);
+		if (rInfo->winnerCell != RESULT_NOT_WIN) {
+			break;
+		}
 		switch ( rInfo->playerTurn ) 
 		{
 		case PLAYER1:
@@ -192,4 +196,15 @@ Cell currentPlayerCell( roundInfo r )
 	return ( r.playerTurn == PLAYER1 ) ? r.player1 : r.player2;
 }
 
+// Check board to see if there is still cell empties
+int isDrawn( board grid ){
+	for(int r = 0; r < 3; r++){
+		for(int c = 0; c < 3; c++){
+			if(isCellEmpty(&grid, r, c) == CELL_EMPTY){
+				return 0;
+			}
+		}
+	}
+	return 1; 
 
+}

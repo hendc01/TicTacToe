@@ -97,11 +97,13 @@ position level4( const board *grid, roundInfo rf ){
 	position bestPosition;
 	position secondBest;
 	int drawn = 0;
+	int foundMove = 0;
 	
 	for( int r = 0; r < 3; r++ ){
 		for( int c = 0; c < 3; c++ ){
 			
 			if( isCellEmpty( grid, r, c ) == CELL_EMPTY ){
+				foundMove = 1;
 				board tempGrid = *grid;
 				roundInfo tempInfo = rf;
 				gridAlloc( &tempGrid, r, c, rf.player2 );
@@ -128,9 +130,17 @@ position level4( const board *grid, roundInfo rf ){
 	if( drawn ){
 		return secondBest;	
 	}
-	else{
-		return level1( grid );
+	else if( foundMove ){
+		return level1( grid );	
 	}
+	else{
+		bestPosition.row = -1;
+		bestPosition.collum = -1;
+		bestPosition.error = LV1_NO_CELL;
+		return bestPosition;	
+	}
+	
+
 	
 }
 /*Scan the board for a win for a specif player*/
@@ -179,7 +189,7 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 	int bestScore;
 	rf.player2 = aiSymbol;
 	//MAX PLAYER
-	if( currentPlayerCell(rf) == aiSymbol ){
+	if( currentPlayerCell( rf ) == aiSymbol ){
 		bestScore = -2;
 	}
 	else{
@@ -190,10 +200,8 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 	if( gameState == RESULT_DRAW) {
 		return 0;
 	}
-	if( (gameState == RESULT_X_WINS && 
-	     aiSymbol == CELL_X)  ||
-	     (gameState == RESULT_O_WINS &&
-	      aiSymbol == CELL_O)){
+	if( (gameState == RESULT_X_WINS &&  aiSymbol == CELL_X)  ||
+	     (gameState == RESULT_O_WINS && aiSymbol == CELL_O)){
 		return 1;
 	}
 	if( (gameState == RESULT_X_WINS && aiSymbol == CELL_O) ||
@@ -211,7 +219,7 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn ){
 				evaluation = minimax( grid, aiSymbol, 
 					depthInfo, turn + 1 );
 				if( currentPlayerCell(rf) == 
-				   rf.player2 ){
+				   aiSymbol ){
 					if( evaluation > bestScore ){
 						bestScore = evaluation;
 					}	

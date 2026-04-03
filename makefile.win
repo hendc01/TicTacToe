@@ -38,8 +38,8 @@ src/sql.o: src/sql.c include/sql.h include/sqlite3.h
 src/score.o: src/score.c include/gameTypes.h include/sqlite3.h include/score.h
 	$(CC) -c "src/score.c" -o "src/score.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/win.o: src/win.c include/gameTypes.h include/win.h
-	$(CC) -c "src/win.c" -o "src/win.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+src/win.o: src/win.c include/gameTypes.h include/win.h include/game.h
+	$(CC) -c "src/win.c" -o "src/win.o" $(CFLAGS) 
 
 src/auth.o: src/auth.c include/sql.h include/inputSafe.h include/gameTypes.h include/sqlite3.h include/render.h include/auth.h include/menu.h
 	$(CC) -c "src/auth.c" -o "src/auth.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
