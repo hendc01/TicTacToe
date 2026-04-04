@@ -21,7 +21,7 @@ position levelControler( board *grid ,GameTypes level,
 		ps = level2( grid, round.turnCell );
 		break;
 	case LEVEL3:
-		ps = level4( grid, round, 3);
+		ps = level4( grid, round, 3 );
 		break;
 	case LEVEL4:
 		ps = level4( grid, round, 9 );
@@ -100,7 +100,9 @@ position level4( const board *grid, roundInfo rf, int depth ){
 	int valuation;
 	position bestPosition;
 	position secondBest;
+	position thirdBest;
 	int drawn = 0;
+	int nonTerminal = 0;
 	int foundMove = 0;
 	
 	for( int r = 0; r < 3; r++ ){
@@ -115,7 +117,7 @@ position level4( const board *grid, roundInfo rf, int depth ){
 				playerSwitch( &tempInfo.playerTurn );
 				valuation = minimax( tempGrid, aiSymbol,
 					tempInfo, rf.turn + 1, depth );
-					
+				printf("Valuationn %d Number", valuation );	
 				if( valuation == 1 ){
 					bestPosition.row = r;
 					bestPosition.collum = c;
@@ -125,17 +127,25 @@ position level4( const board *grid, roundInfo rf, int depth ){
 					secondBest.row = r;
 					secondBest.collum = c;
 					drawn = 1;
-				}	
+				}
+				if( valuation == 2 || valuation == -2 ){
+					thirdBest = level1( grid );
+					nonTerminal = 1;
+				}
 			}	
 		}
 	}
 	if( drawn ){
 		return secondBest;	
 	}
+	else if( nonTerminal ){
+		return thirdBest; 
+	}
 	else if( foundMove ){
 		return level1( grid );	
 	}
 	else{
+		printf("Else triggered");
 		bestPosition.row = -1;
 		bestPosition.collum = -1;
 		bestPosition.error = LV1_NO_CELL;
@@ -196,11 +206,10 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 		bestScore = 2;
 	}
 	
-	if (depth == 0) {
-		return 10; // later we improve this
-	}
-	
 	gameState = result( &grid, turn );
+	if (depth == 0) {
+		return 10;
+	}
 	if( gameState == RESULT_DRAW) {
 		return 0;
 	}
@@ -212,6 +221,7 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	   (gameState == RESULT_O_WINS && aiSymbol == CELL_X) ){
 		return -1;
 	}
+	
 	for( int r = 0 ; r < 3 ; r++ ){
 		for( int c = 0 ; c < 3 ; c++ ){
 			isEmpty = isCellEmpty( &grid, r, c );
@@ -227,12 +237,12 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 					depthInfo, turn + 1, depth -1 );
 				if( currentPlayerCell(rf) == 
 				   aiSymbol ){
-					if( evaluation > bestScore ){
+					if( evaluation > bestScore  && evaluation != 10){
 						bestScore = evaluation;
 					}	
 				}
 				else{
-					if( evaluation < bestScore ){
+					if( evaluation < bestScore  && evaluation != 10 ){
 						bestScore = evaluation;
 					}	
 				}
