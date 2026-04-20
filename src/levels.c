@@ -143,7 +143,7 @@ position minimaxDepth( const board *grid, roundInfo rf, int depth ){
 					drawn = 1;
 				}
 				if( valuation == 2 || valuation == -2 ){
-					thirdBest = level1( grid );
+					thirdBest = level2( grid, currentPlayerCell(rf) );
 					nonTerminal = 1;
 				}
 			}	
@@ -156,7 +156,7 @@ position minimaxDepth( const board *grid, roundInfo rf, int depth ){
 		return thirdBest; 
 	}
 	else if( foundMove ){
-		return level1( grid );	
+		return level2( grid, currentPlayerCell(rf) );	
 	}
 	
 }
