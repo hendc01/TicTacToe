@@ -28,10 +28,12 @@ int authInitDB( sqlite3 **db )
 	");";
 	const char *sqlScores =
 	"CREATE TABLE IF NOT EXISTS scores("
-	"id_user INTEGER PRIMARY KEY,"
+	"id_user INTEGER,"
+	"level INTEGER,"
 	"wins INTEGER NOT NULL DEFAULT 0,"
 	"losses INTEGER NOT NULL DEFAULT 0,"
 	"draws INTEGER NOT NULL DEFAULT 0,"
+	"PRIMARY KEY(id_user,level),"
 	"FOREIGN KEY(id_user) REFERENCES users(id) ON DELETE CASCADE"
 	");";
 	if (sqlite3_exec( *db, sqlUsers, NULL, NULL, &err) != SQLITE_OK)

@@ -22,6 +22,7 @@ roundInfo game ( board *grid, GameTypes gameMode)
 {
 	/*Returns Game Option*/	
 	roundInfo py;
+	GameTypes level;
 	py = roundInit( );
 	gridInnit( grid );
 	
@@ -39,8 +40,9 @@ roundInfo game ( board *grid, GameTypes gameMode)
 		return py;
 	
 	case PLAYER_VS_MACHINE:
-		gameMode = pveMenu();
-		gamePvEControler( grid, gameMode, &py);
+		level = pveMenu();
+		gamePvEControler( grid, level, &py);
+		py.level = level;
 		return py;
 	case MENU_ERROR:
 		printf( "Game Mode menu read error. \n" );

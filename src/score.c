@@ -8,7 +8,7 @@ Controls all the function flow necessay to creat a new score row or
 to update it.
 */
 ScoreDB scoreControler( sqlite3 *db, roundInfo py , 
-					   ScoreInfo *roundScore )
+			ScoreInfo *roundScore )
 {
 	ScoreDB result; 
 	/*
@@ -22,15 +22,18 @@ ScoreDB scoreControler( sqlite3 *db, roundInfo py ,
 	
 	ScoreInfo runScore[2] = {0};
 	
-	result = scoreSelect( db, &dbScore );
+	result = scoreSelect( db, &dbScore, py );
+	if( result == SCORE_DB_FAILED ){
+		return SCORE_DB_FAILED;
+	}
 	updateRoundInfo( py, runScore );
 	
 	player1ScoreUpdate( &runScore[PLAYER1], &dbScore, 
 					 &roundScore[PLAYER1] );
 	/*If scoreUpsert() is used without, updating the second parameter(
 	scoreInfo), when updating a score it will currupt the DB data*/
-	scoreUpsert( db, roundScore[PLAYER1] );
-	return result;
+	return scoreUpsert( db, roundScore[PLAYER1], py );
+	
 }
 
 /*
@@ -48,17 +51,16 @@ ScoreDB scoreControler( sqlite3 *db, roundInfo py ,
    allowing direct update of wins/losses/draws for each player.
 */
 void updateRoundInfo( roundInfo py, ScoreInfo *roundScore )
-{    
-	if( py.winnerCell != RESULT_NOT_WIN )
+{
+	if( py.winnerCell == RESULT_DRAW )
 	{
-
+		roundScore[PLAYER1].draws++;
+		roundScore[PLAYER2].draws++;
+	}
+	else if( py.winnerCell != RESULT_NOT_WIN )
+	{
 		roundScore[py.winnerPy].wins++;
 		roundScore[py.losserPy].losses++;
-	}
-	else if( py.winnerCell != RESULT_DRAW )
-	{
-		roundScore[PLAYER2].draws++;
-		roundScore[PLAYER1].draws++;	
 	}
 }
 
@@ -69,7 +71,7 @@ void updateRoundInfo( roundInfo py, ScoreInfo *roundScore )
   -dbScore constain the score data for logged in player(player1).
 */
 void player1ScoreUpdate( const ScoreInfo *runScore, 
-					  const ScoreInfo *dbScore,  ScoreInfo *roundScore )
+			 const ScoreInfo *dbScore,  ScoreInfo *roundScore )
 {
 	/*Score controller passed the player1 index, directly instead of
 	the array*/
@@ -79,19 +81,20 @@ void player1ScoreUpdate( const ScoreInfo *runScore,
 }
 /*Populate the scoreInfo struct with data of the user that has 
 logged in*/
-ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore )
+ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore, roundInfo py )
 {
 	int rc;
 	sqlite3_stmt *stmt = NULL;
 	const char *sql;
 	sql =
-	"SELECT wins, losses, draws FROM scores WHERE id_user = ?;";
+	"SELECT wins, losses, draws FROM scores WHERE id_user = ? AND level = ?;";
 	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
 	if( rc != SQLITE_OK )
 	{
 		return SCORE_DB_FAILED;
 	}
 	sqlite3_bind_int( stmt, 1, dbScore->id  );
+	sqlite3_bind_int( stmt, 2, py.level );
 	
 	rc = sqlite3_step( stmt );
 	
@@ -104,18 +107,27 @@ ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore )
 		sqlite3_finalize( stmt );
 		return SCORE_DB_OK;
 	}
+	if( rc == SQLITE_DONE ){
+		/*If not found due to level x yet not exist for that
+		user it just return all score data as 0*/
+		dbScore->wins = 0;
+		dbScore->losses = 0;
+		dbScore->draws = 0;
+		sqlite3_finalize(stmt);
+		return SCORE_DB_NOT_FOUND;
+	}
 	sqlite3_finalize( stmt );
 	return SCORE_DB_FAILED;
 }
 /*Updates or creat a score database row.*/
-ScoreDB scoreUpsert(sqlite3 *db, const ScoreInfo s)
+ScoreDB scoreUpsert( sqlite3 *db, const ScoreInfo s, roundInfo py )
 {
 	int rc;
 	sqlite3_stmt *stmt = NULL;
 	
 	const char *sql =
-	"INSERT INTO scores(id_user, wins, losses, draws) VALUES(?,?,?,?) "
-	"ON CONFLICT(id_user) DO UPDATE SET "
+	"INSERT INTO scores(id_user,level, wins, losses, draws) VALUES(?,?,?,?,?) "
+	"ON CONFLICT(id_user, level) DO UPDATE SET "
 	"wins=excluded.wins, "
 	"losses=excluded.losses, "
 	"draws=excluded.draws;";
@@ -125,11 +137,11 @@ ScoreDB scoreUpsert(sqlite3 *db, const ScoreInfo s)
 		printf("Prepare failed: %s\n", sqlite3_errmsg(db));
 		return SCORE_DB_FAILED;
 	}
-	
 	sqlite3_bind_int(stmt, 1, s.id);
-	sqlite3_bind_int(stmt, 2, s.wins);
-	sqlite3_bind_int(stmt, 3, s.losses);
-	sqlite3_bind_int(stmt, 4, s.draws);
+	sqlite3_bind_int(stmt, 2, py.level);
+	sqlite3_bind_int(stmt, 3, s.wins);
+	sqlite3_bind_int(stmt, 4, s.losses);
+	sqlite3_bind_int(stmt, 5, s.draws);
 	
 	rc = sqlite3_step(stmt);
 	if (rc != SQLITE_DONE) {

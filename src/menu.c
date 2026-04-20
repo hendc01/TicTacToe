@@ -102,7 +102,7 @@ GameTypes pveMenu( void )
 	printf( "Player vs Machine\n" );
 	printf( "(1) LEVEL 1\n" );
 	printf( "(2) LEVEL 2\n" );
-	printf( "(2) LEVEL 3\n" );
+	printf( "(3) LEVEL 3\n" );
 	printf( "(4) LEVEL 4\n" );
 	choice = intInput( 1, 4 );
 	switch (choice)

@@ -21,6 +21,7 @@ typedef enum
 {
 	SCORE_DB_FAILED,
 	SCORE_DB_OK,
+	SCORE_DB_NOT_FOUND,
 	
 }ScoreDB;
 
@@ -158,6 +159,7 @@ typedef struct
 typedef struct
 {
 	int id;
+	int level;
 	int wins;
 	int losses;
 	int draws;
@@ -173,6 +175,7 @@ typedef struct
 	Player losserPy;
 	GameResult winnerCell;
 	int turn;
+	GameTypes level;
 }roundInfo;
 
 typedef struct

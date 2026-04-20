@@ -8,15 +8,15 @@ RM       = del /q /f
 CD       = cd /d
 LIBS     = "-Wl,--stack,12582912" "-lws2_32"
 INCS     = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe/include"
-CXXINCS  = "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe/include"
+CXXINCS  = "-IC:/Users/henri/OneDrive - University of Sussex/c++ project/program1.0.cpp/C++ COURSEWORK" "-IC:/Users/henri/OneDrive - University of Sussex/c++ project/program1.0.cpp" "-IC:/Users/henri/OneDrive/Documentos/projects/TicTacToe/include"
 CXXFLAGS = $(CXXINCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 CFLAGS   = $(INCS) "-g3" "-pipe" "-Wall" "-Wextra" "-D_DEBUG"
 WINDRESFLAGS = 
 RES      = TicTacToe_private.res
-OBJ      = src/sqlite3.o src/sql.o src/score.o src/win.o src/auth.o src/levels.o src/innit.o src/inputSafe.o src/main.o src/render.o src/supervisor.o src/menu.o src/game.o src/lanSocket.o $(RES)
+OBJ      = src/sql.o src/inputSafe.o src/render.o src/game.o src/levels.o src/win.o src/auth.o src/supervisor.o src/main.o src/score.o src/innit.o src/lanSocket.o src/menu.o src/sqlite3.o $(RES)
 BIN      = TicTacToe.exe
-LINKOBJ  = "src/sqlite3.o" "src/sql.o" "src/score.o" "src/win.o" "src/auth.o" "src/levels.o" "src/innit.o" "src/inputSafe.o" "src/main.o" "src/render.o" "src/supervisor.o" "src/menu.o" "src/game.o" "src/lanSocket.o" "TicTacToe_private.res"
-CLEANOBJ = "src\sqlite3.o" "src\sql.o" "src\score.o" "src\win.o" "src\auth.o" "src\levels.o" "src\innit.o" "src\inputSafe.o" "src\main.o" "src\render.o" "src\supervisor.o" "src\menu.o" "src\game.o" "src\lanSocket.o" "TicTacToe_private.res" "TicTacToe.exe"
+LINKOBJ  = "src/sql.o" "src/inputSafe.o" "src/render.o" "src/game.o" "src/levels.o" "src/win.o" "src/auth.o" "src/supervisor.o" "src/main.o" "src/score.o" "src/innit.o" "src/lanSocket.o" "src/menu.o" "src/sqlite3.o" "TicTacToe_private.res"
+CLEANOBJ = "src\sql.o" "src\inputSafe.o" "src\render.o" "src\game.o" "src\levels.o" "src\win.o" "src\auth.o" "src\supervisor.o" "src\main.o" "src\score.o" "src\innit.o" "src\lanSocket.o" "src\menu.o" "src\sqlite3.o" "TicTacToe_private.res" "TicTacToe.exe"
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -29,47 +29,47 @@ TicTacToe.exe: $(OBJ)
 
 	$(CC) $(LINKOBJ) -o "TicTacToe.exe" $(LIBS)
 
-src/sqlite3.o: src/sqlite3.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/sqlite3.c" -o "src/sqlite3.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+src/sql.o: src/sql.c include/sql.h include/sqlite3.h
+	$(CC) -c "src/sql.c" -o "src/sql.o" $(CFLAGS) 
 
-src/sql.o: src/sql.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/sql.c" -o "src/sql.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/score.o: src/score.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/score.c" -o "src/score.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/win.o: src/win.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/win.c" -o "src/win.o" $(CFLAGS) 
-
-src/auth.o: src/auth.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/auth.c" -o "src/auth.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/levels.o: src/levels.c include/sql.h include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/supervisor.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/auth.h include/score.h include/menu.h include/levels.h
-	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS) 
-
-src/innit.o: src/innit.c include/gameTypes.h include/innit.h
-	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS) 
-
-src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/gameTypes.h include/game.h
+src/inputSafe.o: src/inputSafe.c include/inputSafe.h include/game.h include/gameTypes.h
 	$(CC) -c "src/inputSafe.c" -o "src/inputSafe.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/main.o: src/main.c include/inputSafe.h include/gameTypes.h include/game.h include/sqlite3.h include/render.h include/lanSocket.h include/auth.h include/score.h include/menu.h
-	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/render.o: src/render.c include/gameTypes.h include/sqlite3.h include/render.h include/auth.h
+src/render.o: src/render.c include/sqlite3.h include/render.h include/auth.h include/gameTypes.h
 	$(CC) -c "src/render.c" -o "src/render.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
-src/supervisor.o: src/supervisor.c include/inputSafe.h include/gameTypes.h include/supervisor.h include/sqlite3.h include/auth.h
-	$(CC) -c "src/supervisor.c" -o "src/supervisor.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
-
-src/menu.o: src/menu.c include/inputSafe.h include/gameTypes.h include/supervisor.h include/sqlite3.h include/render.h include/auth.h include/menu.h
-	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS) 
-
-src/game.o: src/game.c include/gameMode.h include/inputSafe.h include/gameTypes.h include/win.h include/game.h include/sqlite3.h include/render.h include/lanSocket.h include/innit.h include/menu.h include/levels.h
+src/game.o: src/game.c include/inputSafe.h include/lanSocket.h include/sqlite3.h include/game.h include/render.h include/gameTypes.h include/levels.h include/menu.h include/win.h include/gameMode.h include/innit.h
 	$(CC) -c "src/game.c" -o "src/game.o" $(CFLAGS) 
 
-src/lanSocket.o: src/lanSocket.c include/inputSafe.h include/gameTypes.h include/game.h include/sqlite3.h include/lanSocket.h include/innit.h include/menu.h
+src/levels.o: src/levels.c include/game.h include/render.h include/gameTypes.h include/levels.h include/win.h
+	$(CC) -c "src/levels.c" -o "src/levels.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/win.o: src/win.c include/game.h include/gameTypes.h include/win.h
+	$(CC) -c "src/win.c" -o "src/win.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/auth.o: src/auth.c include/inputSafe.h include/sql.h include/sqlite3.h include/render.h include/auth.h include/gameTypes.h include/menu.h
+	$(CC) -c "src/auth.c" -o "src/auth.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/supervisor.o: src/supervisor.c include/inputSafe.h include/sqlite3.h include/auth.h include/gameTypes.h include/supervisor.h
+	$(CC) -c "src/supervisor.c" -o "src/supervisor.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/main.o: src/main.c include/inputSafe.h include/lanSocket.h include/sqlite3.h include/game.h include/render.h include/auth.h include/gameTypes.h include/menu.h include/score.h
+	$(CC) -c "src/main.c" -o "src/main.o" $(CFLAGS) 
+
+src/score.o: src/score.c include/sqlite3.h include/gameTypes.h include/score.h
+	$(CC) -c "src/score.c" -o "src/score.o" $(CFLAGS) 
+
+src/innit.o: src/innit.c include/gameTypes.h include/innit.h
+	$(CC) -c "src/innit.c" -o "src/innit.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/lanSocket.o: src/lanSocket.c include/inputSafe.h include/lanSocket.h include/sqlite3.h include/game.h include/gameTypes.h include/menu.h include/innit.h
 	$(CC) -c "src/lanSocket.c" -o "src/lanSocket.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/menu.o: src/menu.c include/inputSafe.h include/sqlite3.h include/render.h include/auth.h include/gameTypes.h include/menu.h include/supervisor.h
+	$(CC) -c "src/menu.c" -o "src/menu.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
+
+src/sqlite3.o: src/sqlite3.c
+	$(CC) -c "src/sqlite3.c" -o "src/sqlite3.o" $(CFLAGS)  -finput-charset=UTF-8 -fexec-charset=windows-1252
 
 TicTacToe_private.res: TicTacToe_private.rc 
 	$(WINDRES) -i "TicTacToe_private.rc" --input-format=rc -o "TicTacToe_private.res" -O coff $(WINDRESFLAGS) 

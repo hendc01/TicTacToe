@@ -21,10 +21,10 @@ position levelControler( board *grid ,GameTypes level,
 		ps = level2( grid, round.turnCell );
 		break;
 	case LEVEL3:
-		ps = level4( grid, round, 3 );
+		ps = minimaxDepth( grid, round, 3 );
 		break;
 	case LEVEL4:
-		ps = level4( grid, round, 9 );
+		ps = minimaxDepth( grid, round, 9 );
 		break;
 	default:
 		ps.row = -1;
@@ -96,7 +96,12 @@ position level2( const board *grid, Cell currentPlayer )
 	return level1( grid );
 }
 
-position level4( const board *grid, roundInfo rf, int depth ){
+/*This function control all the minimax return calls, and chose as 
+  position 1* A winning state (1) 2* Drawn State (0) or 
+  A non terminal State in case of limited depth (2, -2)
+  It return on the first 1 and for drawn and non terminal it try all 
+  moves before trying to find a 1 valuation*/
+position minimaxDepth( const board *grid, roundInfo rf, int depth ){
 	int valuation;
 	position bestPosition;
 	position secondBest;
@@ -109,20 +114,29 @@ position level4( const board *grid, roundInfo rf, int depth ){
 		for( int c = 0; c < 3; c++ ){
 			
 			if( isCellEmpty( grid, r, c ) == CELL_EMPTY ){
+				
 				foundMove = 1;
 				board tempGrid = *grid;
 				roundInfo tempInfo = rf;
+				
+				/*This block use identical logic as in 
+				 minimax() function, but without recursion*/
 				Cell aiSymbol = currentPlayerCell(rf);
 				gridAlloc( &tempGrid, r, c, aiSymbol );
 				playerSwitch( &tempInfo.playerTurn );
 				valuation = minimax( tempGrid, aiSymbol,
-					tempInfo, rf.turn + 1, depth );
-				printf("Valuationn %d Number", valuation );	
+					tempInfo, rf.turn + 1, depth - 1 );
+				/*All winning states are treated as 
+				equal, therefore the first 1 found can
+				be returned immideatly*/
 				if( valuation == 1 ){
 					bestPosition.row = r;
 					bestPosition.collum = c;
 					return bestPosition;
 				}
+				/*Drawn and Non-Terminal can only return
+				 after it has search for all moves
+				 trying to find a 1 (winning state)*/
 				if( !drawn && valuation == 0 ){
 					secondBest.row = r;
 					secondBest.collum = c;
@@ -143,13 +157,6 @@ position level4( const board *grid, roundInfo rf, int depth ){
 	}
 	else if( foundMove ){
 		return level1( grid );	
-	}
-	else{
-		printf("Else triggered");
-		bestPosition.row = -1;
-		bestPosition.collum = -1;
-		bestPosition.error = LV1_NO_CELL;
-		return bestPosition;	
 	}
 	
 }
@@ -190,6 +197,8 @@ int randomIndex( int max )
 	return rand() % max;
 }
 // !!!SYMBOL must me the AI symboy
+/* Return the evaluation for MAX (AI), in case that the depth chosen 
+   cant find a terminal state it returns -2 or 2*/
 int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	roundInfo depthInfo;
 	Cell isEmpty;
@@ -207,6 +216,9 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	}
 	
 	gameState = result( &grid, turn );
+	//This prevents best score from being changed, doing so allows
+	//The use of 2 and -2 as flag indicating it was a return of a 
+	//search with limited depth without a terminal state found.
 	if (depth == 0) {
 		return 10;
 	}
@@ -229,36 +241,43 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 				
 				foundMove = 1;
 				board tempGrid = grid;
+				//refresh symbol after playerSwitch
+				//changed player using pointer
 				symbol = currentPlayerCell( rf );
 				gridAlloc( &tempGrid, r, c, symbol );
+				
+				/*A copy of rf is sent to playerSwitch
+				so that we still have the currentPlayer
+				of this round unchanged to use later in
+				IF MAX*/
 				depthInfo = rf;
+				
 				playerSwitch( &depthInfo.playerTurn );
 				evaluation = minimax( tempGrid, aiSymbol, 
 					depthInfo, turn + 1, depth -1 );
+				
+				//IF MAX
 				if( currentPlayerCell(rf) == 
 				   aiSymbol ){
-					if( evaluation > bestScore  && evaluation != 10){
+					if( evaluation > bestScore  && 
+					    evaluation != 10){
 						bestScore = evaluation;
 					}	
 				}
+				//IF MIN
 				else{
-					if( evaluation < bestScore  && evaluation != 10 ){
+					if( evaluation < bestScore  && 
+					    evaluation != 10 ){
 						bestScore = evaluation;
 					}	
 				}
-				
-			
 			}
 		}
 	}
+	//In case minimax is called in a terminal state board.
 	if( !foundMove ){
 		return 0;
 	}
 	return bestScore;
-}
-void minimaxSwitch( Minimax *isMax )
-{
-	*isMax = ( *isMax == MIN_PLAYER ) ? MAX_PLAYER : 
-	MIN_PLAYER;
 }
 

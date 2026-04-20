@@ -33,6 +33,7 @@ int main( void )
 	{	/*Return roundInfo*/
 		roundScore[PLAYER1].id = user.id; 
 		py = game( &grid, menuControler( user, db ) );
+		printf("This is the level = %d", py.level);
 		converterResult( py.winnerCell );
 		printf("%d", scoreControler( db, py, roundScore ));
 	}
