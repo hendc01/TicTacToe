@@ -3,5 +3,6 @@
 #include "gameTypes.h"
 roundInfo roundInit( void );
 void gridInnit( board *grid );
+void playerScoreInnit( ScoreInfo *dbInfo, ScoreInfo *rf  );
 #endif
 

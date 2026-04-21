@@ -9,9 +9,12 @@
 #include "render.h"
 #include "score.h"
 #include "lanSocket.h"
+#include "innit.h"
+#include <sodium.h>
 
 int main( void )
 {
+
 	//lanPvPControler();
 	sqlite3 *db = NULL;
 	srand( time( NULL ) );
@@ -21,7 +24,11 @@ int main( void )
 	userInfo user;
 	/*First index stores PLAYER1 second PLAYER2*/
 	ScoreInfo roundScore[2];
-	
+	ScoreInfo player1ScoreDB[4];
+	if (sodium_init() < 0 ) {
+		printf("libsodium init failed\n");
+		return 1;
+	}
 	if(authInitDB( &db ) != 0 )
 	{
 		printf(" DataBase Failed\n ");
@@ -32,13 +39,16 @@ int main( void )
 	while(1)
 	{	/*Return roundInfo*/
 		roundScore[PLAYER1].id = user.id; 
-		py = game( &grid, menuControler( user, db ) );
-		printf("This is the level = %d", py.level);
+		playerScoreInnit( player1ScoreDB, roundScore );
+		py = game( &grid, menuControler( user, db ), 
+			  player1ScoreDB );
 		converterResult( py.winnerCell );
-		printf("%d", scoreControler( db, py, roundScore ));
+		player1ScoreDB[PLAYER1] = roundScore[PLAYER1];
+		printf("%d", scoreControler( db, py, player1ScoreDB ));
+		displayScore( player1ScoreDB );
 	}
 	
-	
+
 	sqlite3_close( db );
 	return 0;
 }

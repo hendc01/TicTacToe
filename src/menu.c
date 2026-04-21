@@ -104,7 +104,8 @@ GameTypes pveMenu( void )
 	printf( "(2) LEVEL 2\n" );
 	printf( "(3) LEVEL 3\n" );
 	printf( "(4) LEVEL 4\n" );
-	choice = intInput( 1, 4 );
+	printf( "(5) Display ScoreBoard\n" );
+	choice = intInput( 1, 5 );
 	switch (choice)
 	{
 	case 1:
@@ -115,6 +116,8 @@ GameTypes pveMenu( void )
 		return LEVEL3;
 	case 4:
 		return LEVEL4;
+	case 5:
+		return DISPLAY;
 	default:
 		return MENU_ERROR;
 	}

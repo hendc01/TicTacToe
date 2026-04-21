@@ -2,6 +2,7 @@
 #include "game.h"
 #include <string.h>
 #include <stdio.h>
+#include <sodium.h>
 
 /*Validate integer input and add a domain*/
 int intInput ( int min, int max )
@@ -76,12 +77,21 @@ position gameInput()
 }
 
 /*Login and register credentials input*/
-int loginInput( userInfo *user  )
+int loginInput( userInfo *user, int chose  )
 { 
+	char hashed_password[crypto_pwhash_STRBYTES];
 	printf( "Username:\n" );
 	userInput( user->userName, sizeof( user->userName ) );
 	printf( "Password\n" );
 	userInput( user->userPass, sizeof( user->userPass ) );
+	if( chose == 0 ){
+		crypto_pwhash_str(hashed_password, user->userPass, 
+				  strlen(user->userPass),
+				  crypto_pwhash_OPSLIMIT_INTERACTIVE,
+				  crypto_pwhash_MEMLIMIT_INTERACTIVE);
+		strcpy( user->userPass, hashed_password );	
+	}
+
 	return 1;
 }
 

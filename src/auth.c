@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <render.h>
+#include <sodium.h>
 
 
 void authRun( userInfo *user, sqlite3 *db, ScoreInfo 
@@ -43,16 +44,16 @@ LoginSystem authController( userInfo *user, int loginOpt,
 		loginOpt = loginMenu( );
 	}
 	
-	loginInput( user );
+	
 	/*Sub Menus from main login menu*/
 	switch ( loginOpt )
 	{
 	case LOGIN:
-		
+		loginInput( user, 1 );
 		result = authLogin( db, user );
 		return result;
 	case REGISTER:
-		
+		loginInput( user, 0 );
 		if( admCount( db )  < 1 )
 		{
 			user->userRole = 0;
@@ -157,7 +158,10 @@ LoginSystem authLogin( sqlite3 *db, userInfo *user )
 			( const char *)sqlite3_column_text( stmt, 2 );
 		/*sql owns the stored memory adress so its necessary to compare
 		before .._finalize*/
-		int result = strcmp( stored, user->userPass );
+		
+		int result = crypto_pwhash_str_verify(stored, 
+						      user->userPass, 
+						      strlen(user->userPass));
 		
 		sqlite3_finalize( stmt );
 		stmt = NULL;
@@ -178,4 +182,7 @@ LoginSystem authLogin( sqlite3 *db, userInfo *user )
 	
 	return LOGIN_ERROR;
 }
+
+
+/*Encrypting Password*/
 

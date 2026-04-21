@@ -18,7 +18,7 @@
   -PVP and PVE will rely on gameModeControle to move the board and 
    switch current player.
 */
-roundInfo game ( board *grid, GameTypes gameMode)
+roundInfo game( board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
 {
 	/*Returns Game Option*/	
 	roundInfo py;
@@ -41,7 +41,13 @@ roundInfo game ( board *grid, GameTypes gameMode)
 	
 	case PLAYER_VS_MACHINE:
 		level = pveMenu();
-		gamePvEControler( grid, level, &py);
+		if( level == DISPLAY ){
+			displayScore( dbInfo );
+		}
+		else{
+			gamePvEControler( grid, level, &py);	
+		}
+		
 		py.level = level;
 		return py;
 	case MENU_ERROR:
@@ -112,7 +118,6 @@ void gamePvEControler( board *grid, GameTypes gameMode,
 	position ps;
 	
 	printBoard( grid );
-	
 	/*Loop can also stop with RESULT_ERROR, appart from RESULT_WIN*/
 	while( rInfo->winnerCell == RESULT_NOT_WIN )
 	{

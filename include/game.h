@@ -2,7 +2,7 @@
 #define GAME_H
 #include "gameTypes.h"
 
-roundInfo game ( board *grid, GameTypes gameChoices );
+roundInfo game ( board *grid, GameTypes gameChoices, ScoreInfo *dbInfo );
 Cell isCellEmpty( const board *grid, int r, int c );
 void menu1 ( void );
 void gamePVPControler( board *grid, roundInfo *rInfo	);

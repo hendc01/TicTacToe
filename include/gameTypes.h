@@ -57,6 +57,7 @@ typedef enum
 	LEVEL2 = 4,
 	LEVEL3 = 5,
 	LEVEL4 = 6,
+	DISPLAY = 7,
 	MENU_ERROR = 0,
 }GameTypes;
 
@@ -152,7 +153,7 @@ typedef struct
 {
 	int id;
 	char userName[17];
-	char userPass[17];
+	char userPass[200];
 	Role userRole;
 }userInfo;
 

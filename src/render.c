@@ -148,5 +148,26 @@ void authOtpMsg( LoginSystem result )
 	}
 }
 
-
-
+void displayScore( ScoreInfo *dbInfo ){
+	printf("\n%-7s %-7s %-9s %-7s\n", "Level", "Win", "Losses", "Draws");
+	printf("-------------------------------------\n");
+	
+	for( int i = 0; i < 4; i++ ){
+		printf("%-7d %-7d %-9d %-7d\n",
+		       dbInfo[i].level -2,
+		       dbInfo[i].wins,
+		       dbInfo[i].losses,
+		       dbInfo[i].draws);
+	}
+}
+/*
+void displayScore( ScoreInfo *dbInfo){
+	printf( "Level  Win  Losses  Drawns " );
+	for( int i = 0; i < 4; i++ ){
+		printf( "Level: %d \n", dbInfo[i].level - 3 );
+		printf(  "Win: %d\n", dbInfo[i].wins );
+		printf( "Losses: %d\n", dbInfo[i].losses );
+		printf( "Drawns: %d\n", dbInfo[i].draws );
+	}
+}
+*/

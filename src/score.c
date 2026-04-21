@@ -32,7 +32,9 @@ ScoreDB scoreControler( sqlite3 *db, roundInfo py ,
 					 &roundScore[PLAYER1] );
 	/*If scoreUpsert() is used without, updating the second parameter(
 	scoreInfo), when updating a score it will currupt the DB data*/
-	return scoreUpsert( db, roundScore[PLAYER1], py );
+	result = scoreUpsert( db, roundScore[PLAYER1], py );
+	retrieveScoreInfo( db, roundScore );
+	return result;
 	
 }
 
@@ -87,7 +89,7 @@ ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore, roundInfo py )
 	sqlite3_stmt *stmt = NULL;
 	const char *sql;
 	sql =
-	"SELECT wins, losses, draws FROM scores WHERE id_user = ? AND level = ?;";
+	"SELECT wins, losses, draws, level FROM scores WHERE id_user = ? AND level = ?;";
 	rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
 	if( rc != SQLITE_OK )
 	{
@@ -104,12 +106,14 @@ ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore, roundInfo py )
 		dbScore->wins = sqlite3_column_int( stmt, 0 );
 		dbScore->losses = sqlite3_column_int( stmt, 1 );
 		dbScore->draws = sqlite3_column_int( stmt, 2 );
+		dbScore->level = sqlite3_column_int( stmt, 3 );
 		sqlite3_finalize( stmt );
 		return SCORE_DB_OK;
 	}
 	if( rc == SQLITE_DONE ){
 		/*If not found due to level x yet not exist for that
 		user it just return all score data as 0*/
+		dbScore->level = py.level;
 		dbScore->wins = 0;
 		dbScore->losses = 0;
 		dbScore->draws = 0;
@@ -151,4 +155,13 @@ ScoreDB scoreUpsert( sqlite3 *db, const ScoreInfo s, roundInfo py )
 	}
 	sqlite3_finalize(stmt);
 	return SCORE_DB_OK;
+}
+/*Retrieve the ScoreInfo row for each level of the game and store it
+into an array*/
+void retrieveScoreInfo( sqlite3 *db, ScoreInfo *dbInfo ){
+	roundInfo py;
+	for( int i = 3; i < 7; i++ ){
+		py.level = i;
+		scoreSelect( db, &dbInfo[i - 3], py );
+	}
 }

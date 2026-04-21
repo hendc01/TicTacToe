@@ -1,7 +1,7 @@
 #ifndef INPUTSAFE_H
 #define INPUTSAFE_H
 #include "gameTypes.h"
-int loginInput( userInfo *user );
+int loginInput( userInfo *user, int chose );
 int intInput ( int min, int max );
 void cleanBuffer ( void );
 void userInput( char *userInfo, int size );

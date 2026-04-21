@@ -31,4 +31,11 @@ void gridInnit ( board *grid )
 	}
 }
 
+/*Assign the player id to dbInfo[4], to use that id later to find the 
+user in the db*/
+void playerScoreInnit( ScoreInfo *dbInfo, ScoreInfo *rf  ){
+	for( int i = 0; i < 4; i++ ){
+		dbInfo[i].id = rf[0].id; 
+	}
+}
 
