@@ -45,7 +45,7 @@ int main( void )
 		converterResult( py.winnerCell );
 		player1ScoreDB[PLAYER1] = roundScore[PLAYER1];
 		printf("%d", scoreControler( db, py, player1ScoreDB ));
-		displayScore( player1ScoreDB );
+
 	}
 	
 

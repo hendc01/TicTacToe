@@ -29,7 +29,7 @@ int authInitDB( sqlite3 **db )
 	const char *sqlScores =
 	"CREATE TABLE IF NOT EXISTS scores("
 	"id_user INTEGER,"
-	"level INTEGER,"
+	"level INTEGER NOT NULL,"
 	"wins INTEGER NOT NULL DEFAULT 0,"
 	"losses INTEGER NOT NULL DEFAULT 0,"
 	"draws INTEGER NOT NULL DEFAULT 0,"

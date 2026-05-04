@@ -69,7 +69,7 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 							int *turn)
 {
 	State roundState;
-
+	//doMove take a positon 
     roundState = doMove( grid, ps ,turn, 
 				currentPlayerCell(*py) );
 	if( roundState != MOVE_OK )

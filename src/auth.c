@@ -16,7 +16,6 @@ void authRun( userInfo *user, sqlite3 *db, ScoreInfo
 	LoginSystem  authResult = LOGIN_FAILED; 
 	while( authResult != LOGIN_OK )
 	{
-		/*-1 DEFAULT ARGUMENT. IT DOESNT HAVE A DIRECT EFFECT*/
 		authResult = authController( user, LOGIN_MENU, db );
 		authOtpMsg( authResult );
 		
@@ -26,7 +25,8 @@ void authRun( userInfo *user, sqlite3 *db, ScoreInfo
 			/*user will stores the player1 identifier for DB 
 			select/insert*/
 			authResult = authController( user, REGISTER, db );
-			/*The program uses roundScore to locate/creater user in the 
+			/*The program uses roundScore to locate/create 
+			a user log in the 
 			DB for score table.*/
 			roundScore[PLAYER1].id = user->id; 
 			authOtpMsg( authResult );
@@ -49,11 +49,13 @@ LoginSystem authController( userInfo *user, int loginOpt,
 	switch ( loginOpt )
 	{
 	case LOGIN:
-		loginInput( user, 1 );
+		loginInput( user, LOGIN );
 		result = authLogin( db, user );
 		return result;
 	case REGISTER:
-		loginInput( user, 0 );
+		loginInput( user, REGISTER );
+		/*If DB empty the first user account created is given 
+		the role ADM*/
 		if( admCount( db )  < 1 )
 		{
 			user->userRole = 0;
@@ -116,7 +118,7 @@ LoginSystem authRegister( sqlite3 *db, const int role,
 	
 	sqlite3_finalize( stmt );
 	stmt = NULL;
-	
+	//Must be unique DB itself regects
 	if( rc == SQLITE_CONSTRAINT )
 	{
 		/*Name exist*/
@@ -142,7 +144,7 @@ LoginSystem authLogin( sqlite3 *db, userInfo *user )
 	int rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
 	if( rc != SQLITE_OK )
 	{
-		printf("Prepare failed: %s\n", sqlite3_errmsg( db ));
+		printf( "Prepare failed: %s\n", sqlite3_errmsg( db ) );
 		return LOGIN_FAILED;
 	}
 	

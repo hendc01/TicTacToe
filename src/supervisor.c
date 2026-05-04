@@ -13,7 +13,7 @@ LoginSystem admModeController( AdmTypes admType, sqlite3 *db )
 	case DELETE_ACCOUNT:
 		return runDeleteUser( db );
 	case ADD_ACCOUNT:
-		loginInput( &user, 0 );
+		loginInput( &user, REGISTER );
 		return authRegister( db, 0, user.userName, user.userPass);
 	case EXIT:
 		break;

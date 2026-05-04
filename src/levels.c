@@ -219,9 +219,7 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	//This prevents best score from being changed, doing so allows
 	//The use of 2 and -2 as flag indicating it was a return of a 
 	//search with limited depth without a terminal state found.
-	if (depth == 0) {
-		return 10;
-	}
+
 	if( gameState == RESULT_DRAW) {
 		return 0;
 	}
@@ -232,6 +230,9 @@ int minimax( board grid, Cell symbol, roundInfo rf, int turn, int depth ){
 	if( (gameState == RESULT_X_WINS && aiSymbol == CELL_O) ||
 	   (gameState == RESULT_O_WINS && aiSymbol == CELL_X) ){
 		return -1;
+	}
+	if (depth == 0) {
+		return 10;
 	}
 	
 	for( int r = 0 ; r < 3 ; r++ ){

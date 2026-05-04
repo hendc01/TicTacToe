@@ -84,7 +84,7 @@ int loginInput( userInfo *user, int chose  )
 	userInput( user->userName, sizeof( user->userName ) );
 	printf( "Password\n" );
 	userInput( user->userPass, sizeof( user->userPass ) );
-	if( chose == 0 ){
+	if( chose == REGISTER ){
 		crypto_pwhash_str(hashed_password, user->userPass, 
 				  strlen(user->userPass),
 				  crypto_pwhash_OPSLIMIT_INTERACTIVE,
