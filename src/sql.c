@@ -36,17 +36,17 @@ int authInitDB( sqlite3 **db )
 	"PRIMARY KEY(id_user,level),"
 	"FOREIGN KEY(id_user) REFERENCES users(id) ON DELETE CASCADE"
 	");";
-	if (sqlite3_exec( *db, sqlUsers, NULL, NULL, &err) != SQLITE_OK)
+	if (sqlite3_exec( *db, sqlUsers, NULL, NULL, &err ) != SQLITE_OK)
 	{
 		printf("SQL error (users): %s\n", err);
-		sqlite3_free(err);
+		sqlite3_free( err );
 		return -1;
 	}
 	
 	if (sqlite3_exec(*db, sqlScores, NULL, NULL, &err) != SQLITE_OK)
 	{
 		printf("SQL error (scores): %s\n", err);
-		sqlite3_free(err);
+		sqlite3_free( err );
 		return -1;
 	}
 	return 0;
