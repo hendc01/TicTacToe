@@ -265,18 +265,19 @@ int sendPosition( SOCKET connectionSocket, unsigned char msg[4] ){
 int recvInfo(SOCKET skct, char *buf, int size) {
 	int total = 0;
 	
-	while (total < size) {
-		int result = recv(skct, buf + total, size - total, 0);
+	while ( total < size ) {
+		int result = recv( skct, buf + total, size - total, 0 );
 		
-		if (result > 0) {
+		if ( result > 0 ) {
 			total += result;
 		}
-		else if (result == 0) {
-			printf("connection closed by peer\n");
+		else if ( result == 0 ) {
+			printf("connection closed\n");
 			return 1;
 		}
 		else {
-			printf("receive failed with error: %d\n", WSAGetLastError());
+			printf( "receive failed with error: %d\n", 
+			       WSAGetLastError() );
 			return 1;
 		}
 	}

@@ -19,7 +19,12 @@ void authRun( userInfo *user, sqlite3 *db, ScoreInfo
 		authResult = authController( user, LOGIN_MENU, db );
 		authOtpMsg( authResult );
 		
-		/*NAME_EXIST ONLY HAPPENS DURING REGISTER*/
+		/*NAME_EXIST ONLY HAPPENS DURING REGISTER
+		the purpose of this is that if user write a username
+		that already exist it wont have to pass through the 
+		login menu and decide if its registering or login in
+		it wiill directly go to the registration bit of auth
+		Controller*/
 		if( authResult == NAME_EXIST )
 		{
 			/*user will stores the player1 identifier for DB 
@@ -182,7 +187,7 @@ LoginSystem authLogin( sqlite3 *db, userInfo *user )
 	sqlite3_finalize(stmt);
 	stmt = NULL;
 	
-	return LOGIN_ERROR;
+	return LOGIN_FAILED;
 }
 
 

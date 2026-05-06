@@ -29,19 +29,19 @@ void converterResult( GameResult result )
 	switch ( result ) 
 	{
 	case RESULT_X_WINS:
-		printf( "X" );
+		printf( "X WINS\n" );
 		break;
 	case RESULT_O_WINS:
-		printf( "O" );
+		printf( "O WINS\n" );
 		break;
 	case RESULT_DRAW:
-		printf( "DRAWN" );
+		printf( "DRAWN\n" );
 		break;
 	case RESULT_ERROR:
-		printf( "WIN ERROR" );
+		printf( "WIN ERROR\n" );
 		break;
 	default:
-		printf( "ERROR" );
+		printf( "ERROR\n" );
 		break;
 	}
 }
