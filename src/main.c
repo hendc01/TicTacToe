@@ -26,16 +26,8 @@ int main( void )
 	/*First index stores PLAYER1 second PLAYER2*/
 	ScoreInfo roundScore[2];
 	ScoreInfo player1ScoreDB[4];
-<<<<<<< Updated upstream
-	while(1)
-	{	/*Return roundInfo*/
 
-		py = game( &grid, 1, 
-			  player1ScoreDB );
 
-	}
-
-=======
 	int gui = -1;
 	if (sodium_init() < 0 ) {
 		printf("libsodium init failed\n");
@@ -97,7 +89,7 @@ int main( void )
 	}
 	
 	
->>>>>>> Stashed changes
+
 	return 0;
 }
 

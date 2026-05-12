@@ -20,77 +20,84 @@ for the PVE controler.
 -PVP and PVE will rely on gameModeControle to move the board and 
 switch current player.
 */
-roundInfo game( board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
+roundInfo game(board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
 {
-	/*Returns Game Option*/	
 	roundInfo py;
-	py = roundInit( );
-	gridInnit( grid );
-
-	gamePVPControler( grid, &py);	
-
+	GameTypes level;
 	
-<<<<<<< Updated upstream
-
-
-=======
-	switch ( gameMode ) 
+	py = roundInit();
+	gridInnit(grid);
+	
+	switch (gameMode)
 	{
 	case PLAYER_VS_PLAYER:
 		clearScreen();
+		
 		PvPModes pvpMenu = pvpSubMenu();
+		
 		clearScreen();
-		if( pvpMenu == LAN || pvpMenu == 3){
-			if( pvpMenu == 3 ){
-				
-			}
-			lanPvPControler( pvpMenu );
+		
+		if (pvpMenu == LAN || pvpMenu == 3)
+		{
+			lanPvPControler(pvpMenu);
 			pressEnter();
 			clearScreen();
-			if( pvpMenu == 1 ){
+			
+			if (pvpMenu == 1)
+			{
 				py.turn = 10;
 				return py;
 			}
+			
 			break;
 		}
-		if( pvpMenu == 4 ){
+		
+		if (pvpMenu == 4)
+		{
 			py.turn = 10;
 			return py;
 		}
+		
 		// PVP LOCAL
-		printBoard( grid );
-		gamePVPControler( grid, &py );
+		printBoard(grid);
+		gamePVPControler(grid, &py);
 		py.turn = 11;
 		return py;
 		
 	case PLAYER_VS_MACHINE:
 		clearScreen();
+		
 		level = pveMenu();
 		
-		printf("%d", level);
-		if( level == DISPLAY ){
-			displayScore( dbInfo );
+		if (level == DISPLAY)
+		{
+			displayScore(dbInfo);
 			pressEnter();
 			clearScreen();
 		}
-		else if( level == 7 ){
+		else if (level == 7)
+		{
 			py.turn = 10;
 			return py;
 		}
-		else{
-			gamePvEControler( grid, level, &py);	
+		else
+		{
+			gamePvEControler(grid, level, &py);
 		}
 		
 		py.level = level;
 		return py;
+		
 	case MENU_ERROR:
-		printf( "Game Mode menu read error. \n" );
+		printf("Game Mode menu read error.\n");
 		break;
+		
 	default:
 		py.winnerCell = RESULT_ERROR;
 		return py;
 	}
->>>>>>> Stashed changes
+	
+	return py;
 }
 /*
 Controls the round flow for PVP or PVE, and stores the Winner in 
@@ -100,7 +107,7 @@ roundInfo struct
 -Call resul to check for a wil
 */
 roundInfo gameModeControlerGUI( board *grid, position ps, roundInfo *py, 
-			    int *turn)
+			       int *turn)
 {
 	State roundState;
 	//doMove take a positon 
@@ -185,7 +192,7 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 		
 		ps = gameInput();
 		gameModeControler( grid, ps, rInfo, &turn );
-
+		
 	}
 }
 
