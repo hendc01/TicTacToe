@@ -7,7 +7,7 @@
 #include "gameTypes.h"
 int pvpSentInfo( SOCKET sckt, board *grid, roundInfo *rInfo, int *turn );
 int pvpRunServer();
-int lanPvPControler();
+int lanPvPControler( int i );
 int serverSocketMaker( SOCKET *connectionSocket );
 int createSocket(SOCKET *socketAdress);
 int binding( SOCKET sckt, struct sockaddr_in *scktInfo );
@@ -22,5 +22,5 @@ int recvInfo( SOCKET skct,  char *buf, int size );
 int clientSocketMaker( SOCKET *clientSocket );
 int pvpGameLoop( SOCKET sckt, roundInfo *rInfo, board *grid );
 int runLanGame( roundInfo *rInfo, SOCKET *connectionSocket, 
-				   board *grid, Player player);
+	       board *grid, Player player);
 #endif

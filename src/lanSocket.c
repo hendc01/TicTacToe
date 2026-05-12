@@ -8,13 +8,15 @@
 #include "menu.h"
 #include "gameTypes.h"
 #include "innit.h"
+#include "gui.h"
+
 
 /*LanPvPControler works as a game controller for both The HOST and 
  Client.
  **This function holds GRID, ROUNDINFO and SOCKETS variables.
 
 */
-int lanPvPControler( ){
+int lanPvPControler( int pvpMenu ){
 	SOCKET connectionSocket;
 	SOCKET clientSocket;
 	board grid;
@@ -22,6 +24,14 @@ int lanPvPControler( ){
 	PvPModes opt = pvpSubMenu2();
 	switch( opt ){
 	case HOST_GAME:
+		if( pvpMenu == 3 ){
+			printf("Host instructions:\n");
+			printf("1. Open Hamachi and make sure you are online.\n");
+			printf("2. Create or join the same Hamachi network as the other player.\n");
+			printf("3. Give the other player your Hamachi IPv4 address.\n");
+			printf("4. The client must connect using: your hamachi ip:9091\n");
+			printf("5. If connection fails, may be Windows Firewall Blocking.\n");
+		}
 		if(serverSocketMaker( &connectionSocket ) == 1 ){
 			closesocket( connectionSocket );
 			WSACleanup();
@@ -32,12 +42,22 @@ int lanPvPControler( ){
 		}
 		break;
 	case ENTER_GAME:
+		if( pvpMenu == 3 ){
+			printf("Client instructions:\n");
+			printf("1. Open Hamachi and make sure you are online.\n");
+			printf("2. Join the same Hamachi network as the host.\n");
+			printf("3. Ask the host for their Hamachi IPv4 address.\n");
+			printf("4. Enter the address in this format: IP:PORT\n");
+			printf("5. If it does not connect, check Hamachi and Windows Firewall.\n");
+		}
 		if((clientSocketMaker( &clientSocket ) == 1)){
 			closesocket( clientSocket );
 			WSACleanup();
 			printf("Error connecting\n");}
 		if(runLanGame( &rf, &clientSocket, &grid, PLAYER2 ) == 1)
 		break;
+	case EXIT_PVP:
+		return 1;	
 	default:
 		break;
 	}
@@ -161,6 +181,26 @@ struct sockaddr_in createSocketInfo(  int ip ){
 		printf( "Digite the Ip adress and port of the server you want" 
 			   "to connect. E.g: 192.168.1.1:9091\n " ); 
 		stringInput( ipAdress, sizeof(ipAdress));
+		adress = serveParssing( ipAdress );
+		service.sin_addr.s_addr = inet_addr(adress.ipAdress);
+		service.sin_port = htons( atoi(adress.portAdress) );
+	}
+	else{
+		service.sin_port = htons(9091);	
+		service.sin_addr.s_addr = INADDR_ANY;
+	}
+	return service;
+}
+
+
+/*CreateSocketInfo populates information into the socket for both host
+and Client according to the argument given to the parameter IP*/
+struct sockaddr_in createSocketInfoGUI(  int ip, char *ipAdress  ){
+	struct sockaddr_in service;
+	serverAdress adress;
+	service.sin_family = AF_INET;
+	
+	if( ip == 1 ){
 		adress = serveParssing( ipAdress );
 		service.sin_addr.s_addr = inet_addr(adress.ipAdress);
 		service.sin_port = htons( atoi(adress.portAdress) );

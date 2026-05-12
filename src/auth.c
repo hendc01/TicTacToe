@@ -11,14 +11,15 @@
 
 
 void authRun( userInfo *user, sqlite3 *db, ScoreInfo 
-					roundScore[]  )
+	     roundScore[]  )
 {
 	LoginSystem  authResult = LOGIN_FAILED; 
 	while( authResult != LOGIN_OK )
 	{
 		authResult = authController( user, LOGIN_MENU, db );
 		authOtpMsg( authResult );
-		
+		pressEnter();
+		clearScreen();
 		/*NAME_EXIST ONLY HAPPENS DURING REGISTER
 		the purpose of this is that if user write a username
 		that already exist it wont have to pass through the 
@@ -35,9 +36,58 @@ void authRun( userInfo *user, sqlite3 *db, ScoreInfo
 			DB for score table.*/
 			roundScore[PLAYER1].id = user->id; 
 			authOtpMsg( authResult );
+			pressEnter();
+			clearScreen();
 		}
 	}
 }
+LoginSystem authRunGui( userInfo *user, sqlite3 *db, ScoreInfo 
+	     roundScore[], int loginOpt  )
+{
+	LoginSystem authResult;
+	
+	authResult = authControllerGUI(user, loginOpt, db);
+	
+	if (authResult == LOGIN_OK || authResult == REGISTER_OK)
+	{
+		roundScore[PLAYER1].id = user->id;
+	}
+	
+	return authResult;
+
+}
+LoginSystem authControllerGUI( userInfo *user, int loginOpt, 
+			   sqlite3 *db )
+{
+	LoginSystem result;
+	
+
+	/*Sub Menus from main login menu*/
+	switch ( loginOpt )
+	{
+	case LOGIN:
+		result = authLogin( db, user );
+		return result;
+	case REGISTER:
+		/*If DB empty the first user account created is given 
+		the role ADM*/
+		if( admCount( db )  < 1 )
+		{
+			user->userRole = 0;
+		}
+		else{
+			user->userRole = 1;
+		}
+		result = authRegister( db, user->userRole, user->userName, 
+				      user->userPass );
+		return result;
+		
+	default:
+		result = LOGIN_ERROR;
+		return result;
+	}	
+}
+
 /*Login system controler*/
 LoginSystem authController( userInfo *user, int loginOpt, 
 						   sqlite3 *db )

@@ -9,14 +9,16 @@
 #include "win.h"
 #include "innit.h"
 #include "lanSocket.h"
+#include "gui.h"
+#include <stdlib.h>
 /*Main controler*/
 
 /*-Run one session of the game 
-  - Calls the PVP and PVE functions controler.
-  - Calls PVE sub-menu, sub-menu returns gameMode (level 1, Leve2..3 
-    for the PVE controler.
-  -PVP and PVE will rely on gameModeControle to move the board and 
-   switch current player.
+- Calls the PVP and PVE functions controler.
+- Calls PVE sub-menu, sub-menu returns gameMode (level 1, Leve2..3 
+for the PVE controler.
+-PVP and PVE will rely on gameModeControle to move the board and 
+switch current player.
 */
 roundInfo game( board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
 {
@@ -28,23 +30,119 @@ roundInfo game( board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
 	gamePVPControler( grid, &py);	
 
 	
+<<<<<<< Updated upstream
 
 
+=======
+	switch ( gameMode ) 
+	{
+	case PLAYER_VS_PLAYER:
+		clearScreen();
+		PvPModes pvpMenu = pvpSubMenu();
+		clearScreen();
+		if( pvpMenu == LAN || pvpMenu == 3){
+			if( pvpMenu == 3 ){
+				
+			}
+			lanPvPControler( pvpMenu );
+			pressEnter();
+			clearScreen();
+			if( pvpMenu == 1 ){
+				py.turn = 10;
+				return py;
+			}
+			break;
+		}
+		if( pvpMenu == 4 ){
+			py.turn = 10;
+			return py;
+		}
+		// PVP LOCAL
+		printBoard( grid );
+		gamePVPControler( grid, &py );
+		py.turn = 11;
+		return py;
+		
+	case PLAYER_VS_MACHINE:
+		clearScreen();
+		level = pveMenu();
+		
+		printf("%d", level);
+		if( level == DISPLAY ){
+			displayScore( dbInfo );
+			pressEnter();
+			clearScreen();
+		}
+		else if( level == 7 ){
+			py.turn = 10;
+			return py;
+		}
+		else{
+			gamePvEControler( grid, level, &py);	
+		}
+		
+		py.level = level;
+		return py;
+	case MENU_ERROR:
+		printf( "Game Mode menu read error. \n" );
+		break;
+	default:
+		py.winnerCell = RESULT_ERROR;
+		return py;
+	}
+>>>>>>> Stashed changes
 }
 /*
-  Controls the round flow for PVP or PVE, and stores the Winner in 
-  roundInfo struct 
-  -Call doMove to move the board with the current player symbol
-  -Switch the player
-  -Call resul to check for a wil
+Controls the round flow for PVP or PVE, and stores the Winner in 
+roundInfo struct 
+-Call doMove to move the board with the current player symbol
+-Switch the player
+-Call resul to check for a wil
 */
-roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
-							int *turn)
+roundInfo gameModeControlerGUI( board *grid, position ps, roundInfo *py, 
+			    int *turn)
 {
 	State roundState;
 	//doMove take a positon 
-    roundState = doMove( grid, ps ,turn, 
-				currentPlayerCell(*py) );
+	roundState = doMove( grid, ps ,turn, 
+			    currentPlayerCell(*py) );
+	if( roundState != MOVE_OK )
+	{
+		//displayMoveMsg(roundState);
+		return *py;
+	}
+	py->winnerCell = result( grid, *turn );
+	
+	if( py->winnerCell == RESULT_NOT_WIN )
+	{
+		playerSwitch( &py->playerTurn );
+	}
+	else if( py->winnerCell != RESULT_DRAW)
+	{
+		py->winnerPy = py->playerTurn;
+		/*result() test the win for the current player,
+		so if the playerTurn(currentPlayer) wins, the player opposite
+		is the losser.*/
+		py->losserPy = (py->playerTurn == PLAYER1)? PLAYER2 : PLAYER1;
+		converterResult( py->winnerCell );
+	}
+	return *py;
+}
+/*
+Controls the round flow for PVP or PVE, and stores the Winner in 
+roundInfo struct 
+-Call doMove to move the board with the current player symbol
+-Switch the player
+-Call resul to check for a wil
+*/
+roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
+			    int *turn)
+{
+	State roundState;
+	//doMove take a positon 
+	clearScreen();
+	roundState = doMove( grid, ps ,turn, 
+			    currentPlayerCell(*py) );
 	if( roundState != MOVE_OK )
 	{
 		displayMoveMsg(roundState);
@@ -60,9 +158,18 @@ roundInfo gameModeControler( board *grid, position ps, roundInfo *py,
 	{
 		py->winnerPy = py->playerTurn;
 		/*result() test the win for the current player,
-		  so if the playerTurn(currentPlayer) wins, the player opposite
-		  is the losser.*/
+		so if the playerTurn(currentPlayer) wins, the player opposite
+		is the losser.*/
 		py->losserPy = (py->playerTurn == PLAYER1)? PLAYER2 : PLAYER1;
+		converterResult(py->winnerCell);
+		pressEnter();
+		clearScreen();
+	}
+	else if (py->winnerCell == RESULT_DRAW)
+	{
+		converterResult(py->winnerCell);
+		pressEnter();
+		clearScreen();
 	}
 	return *py;
 }
@@ -75,18 +182,20 @@ void gamePVPControler( board *grid, roundInfo *rInfo )
 	decideSymbol( rInfo );
 	while(rInfo->winnerCell == RESULT_NOT_WIN)
 	{
+		
 		ps = gameInput();
 		gameModeControler( grid, ps, rInfo, &turn );
+
 	}
 }
 
 
 /*Run the functions for PVE mode until there is a winner or drawn*/
 void gamePvEControler( board *grid, GameTypes gameMode, 
-						   roundInfo *rInfo )
+		      roundInfo *rInfo )
 {
 	*rInfo = roundInit( );
-
+	
 	decideSymbol( rInfo );
 	position ps;
 	
@@ -113,15 +222,15 @@ void gamePvEControler( board *grid, GameTypes gameMode,
 			break;
 		}
 		/*Moves the board according to the info gotten above, in PLAYER1
-		  Or PLAYER 2*/
+		Or PLAYER 2*/
 		gameModeControler( grid, ps, rInfo, &rInfo->turn );
 	}
 }
 
 /*This move the board to next player by calling GridAlloc and iterating
-  turn to pass the turn to the next player (x or o)
-  Also, increment *turn. Which will be used to decide drawn in result()
-  when == 9 */
+turn to pass the turn to the next player (x or o)
+Also, increment *turn. Which will be used to decide drawn in result()
+when == 9 */
 State doMove( board *grid, position ps, int *turn, Cell symbol)
 {
 	State result = gridAlloc( grid, ps.row, ps.collum, symbol );
@@ -185,5 +294,5 @@ int isDrawn( board grid ){
 		}
 	}
 	return 1; 
-
+	
 }

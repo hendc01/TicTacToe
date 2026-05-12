@@ -137,3 +137,19 @@ void cleanBuffer ( void )
 		;
 	}	
 }
+
+void clearScreen(){
+	system("cls");
+}
+
+void pressEnter(void)
+{
+	int ch;
+	
+	printf("\nPress Enter to continue...");
+	
+	while ((ch = getchar()) != '\n' && ch != EOF)
+	{
+		;
+	}
+}

@@ -11,4 +11,6 @@ void player1ScoreUpdate( const ScoreInfo *runScore,
 			const ScoreInfo *dbScore,  ScoreInfo *roundScore );
 ScoreDB scoreSelect( sqlite3 *db, ScoreInfo *dbScore, roundInfo py );
 void retrieveScoreInfo( sqlite3 *db, ScoreInfo *dbInfo );
+ScoreDB scoreControler( sqlite3 *db, roundInfo py , 
+		       ScoreInfo *roundScore );
 #endif

@@ -12,11 +12,13 @@ GameTypes menuControler( userInfo user, sqlite3 *db )
 	/*Returns Game Option*/
 	if( user.userRole != ADM )
 	{
+		clearScreen();
 		return mainMenu();
 	}
 	else
 	{
 		/*Supervisor modes*/
+		clearScreen();
 		return admMenuController( db );
 	}
 	/*Supervisor Menus*/
@@ -60,8 +62,8 @@ GameTypes mainMenu( void )
 	printf("TIC-TAC-TOE\n");
 	printf( "(1) PLAYER VS PLAYER\n" );
 	printf( "(2) PLAYER VS MACHINE\n" );
-	printf( "TO BE UPDATE \n" );
-	return (GameTypes)intInput( 1, 2 );
+	printf( "(3) GUI \n" );
+	return (GameTypes)intInput( 1, 3 );
 }
 /*Administrator main Menu*/
 AdmTypes admMenu( void )
@@ -75,15 +77,18 @@ AdmTypes admMenu( void )
 
 PvPModes pvpSubMenu(){
 	printf( "TIC-TAC-TOE\n" );
-	printf( "(1) Local Multiplayer\n" );
-	printf( "(2) Online\n" );
-	return (PvPModes)intInput( 1, 2 );
+	printf( "(1) LAN MODE\n" );
+	printf( "(2) LOCAL\n" );
+	printf( "(3) ONLINE\n" );
+	printf( "(4) EXIT\n" );
+	return (PvPModes)intInput( 1, 4 );
 }
 PvPModes pvpSubMenu2(){
 	printf( "TIC-TAC-TOE\n" );
 	printf( "(1) Host Game\n" );
 	printf( "(2) Enter Game\n" );
-	return (PvPModes)intInput( 1, 2 ) + 2;
+	printf( "(3) EXIT\n" );
+	return (PvPModes)intInput( 1, 3 ) + 2;
 }
 
 /*Administrator sub-menu*/
@@ -105,7 +110,8 @@ GameTypes pveMenu( void )
 	printf( "(3) LEVEL 3\n" );
 	printf( "(4) LEVEL 4\n" );
 	printf( "(5) Display ScoreBoard\n" );
-	choice = intInput( 1, 5 );
+	printf( "(6) EXIT\n" );
+	choice = intInput( 1, 6 );
 	switch (choice)
 	{
 	case 1:
@@ -118,6 +124,8 @@ GameTypes pveMenu( void )
 		return LEVEL4;
 	case 5:
 		return DISPLAY;
+	case 6: 
+		return 6;
 	default:
 		return MENU_ERROR;
 	}
@@ -130,6 +138,13 @@ LoginOpt loginMenu( void )
 	printf( "(2) Register\n" );
 	return (LoginOpt)intInput( 1, 2 );
 }
-		
+
+/*Gui Version or ConsoleLog Version*/
+int versionChoice(){
+	printf( " TIC-TAC-TOE \n" );
+	printf( "(1) Console Log\n" );
+	printf( "(2) GUI Version\n" );
+	return intInput( 1, 2 );	
+}
 		
 

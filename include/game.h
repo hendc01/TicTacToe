@@ -18,5 +18,7 @@ void playerSwitch( Player *playerTurn );
 Cell currentPlayerCell( roundInfo r );
 roundInfo gameModeControler( board *grid, position ps, roundInfo *py, 
 							int *turn);
+roundInfo gameModeControlerGUI( board *grid, position ps, roundInfo *py, 
+			    int *turn);
 int isDrawn( board grid );
 #endif

@@ -1,6 +1,11 @@
 #ifndef GAMETYPES_H
 #define GAMETYPES_H
 
+#define BOARD_SIZE 3
+#define CELL_SIZE 75
+#define MENU_SIZE 100
+#define IP_ADRESS 21
+
 /*Define the game main cell struct*/
 typedef enum
 {
@@ -76,7 +81,7 @@ typedef enum{
 	LOCAL = 2,
 	HOST_GAME = 3,
 	ENTER_GAME = 4,
-	
+	EXIT_PVP = 5,	
 }PvPModes;
 
 typedef enum{

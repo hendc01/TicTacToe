@@ -12,4 +12,5 @@ GameTypes admMenuController( sqlite3 *db );
 GameTypes menuControler( userInfo user, sqlite3 *db );
 PvPModes pvpSubMenu();
 PvPModes pvpSubMenu2();
+int versionChoice();
 #endif

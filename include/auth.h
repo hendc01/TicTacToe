@@ -13,4 +13,8 @@ LoginSystem authController( userInfo *user, int loginOpt,
 						   sqlite3 *db );
 
 int admCount( sqlite3 *db );
+LoginSystem authRunGui(userInfo *user, sqlite3 *db, 
+		       ScoreInfo roundScore[], int loginOpt);
+LoginSystem authControllerGUI( userInfo *user, int loginOpt, 
+			      sqlite3 *db );
 #endif
