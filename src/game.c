@@ -22,41 +22,14 @@ roundInfo game( board *grid, GameTypes gameMode, ScoreInfo *dbInfo)
 {
 	/*Returns Game Option*/	
 	roundInfo py;
-	GameTypes level;
 	py = roundInit( );
 	gridInnit( grid );
+
+	gamePVPControler( grid, &py);	
+
 	
-	switch ( gameMode ) 
-	{
-	case PLAYER_VS_PLAYER:
-		PvPModes pvpMenu = pvpSubMenu();
-		if( pvpMenu == LAN){
-			lanPvPControler();
-			break;
-		}
-		// PVP LOCAL
-		printBoard( grid );
-		gamePVPControler( grid, &py );
-		return py;
-	
-	case PLAYER_VS_MACHINE:
-		level = pveMenu();
-		if( level == DISPLAY ){
-			displayScore( dbInfo );
-		}
-		else{
-			gamePvEControler( grid, level, &py);	
-		}
-		
-		py.level = level;
-		return py;
-	case MENU_ERROR:
-		printf( "Game Mode menu read error. \n" );
-		break;
-	default:
-		py.winnerCell = RESULT_ERROR;
-		return py;
-	}
+
+
 }
 /*
   Controls the round flow for PVP or PVE, and stores the Winner in 
